@@ -103,8 +103,7 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
 
         <Section title="무엇을 했나요">
           {plans.length > 0 && (
-            <div className="flex flex-col gap-2.5">
-              <span className="text-[11px] font-bold text-label-subtle">오늘 계획한 운동</span>
+            <div className="flex flex-col gap-2">
               <div className="flex flex-col gap-2">
                 {plans.map((p) => {
                   const on = kind === p.name;
@@ -144,7 +143,7 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
           )}
 
           <div className="flex flex-col gap-2.5">
-            {plans.length > 0 && <span className="text-[11px] font-bold text-label-subtle">계획에 없던 운동</span>}
+            {plans.length > 0 && <span className="text-[11px] font-bold text-label-subtle">다른 운동</span>}
             <div className="flex flex-wrap gap-2">
               {KINDS.map((k) => (
                 <Chip key={k} label={k} active={kind === k} onClick={() => setKind(k)} />
