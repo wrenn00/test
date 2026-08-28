@@ -237,12 +237,12 @@ function MissionCard({ onAccept, onReject }: { onAccept: () => void; onReject: (
         </span>
       </div>
       <div className="h-px bg-line-subtle" />
-      <div className="px-5 py-4 flex gap-2.5">
-        <button type="button" onClick={onReject} className="flex-1 py-3.5 rounded-[14px] border border-line-strong text-[14px] font-bold">
-          오늘은 안 할래요
-        </button>
-        <button type="button" onClick={onAccept} className="flex-1 py-3.5 rounded-[14px] bg-label text-white text-[14px] font-bold">
+      <div className="px-5 pt-4 pb-4 flex flex-col gap-1">
+        <button type="button" onClick={onAccept} className="w-full py-4 rounded-[14px] bg-label text-white text-[15px] font-bold">
           이걸로 할게요
+        </button>
+        <button type="button" onClick={onReject} className="w-full pt-3 pb-1 text-[14px] font-bold text-label-disabled">
+          오늘은 안 할래요
         </button>
       </div>
     </div>
