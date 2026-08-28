@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ScrollArea from "../components/ScrollArea";
+import ScrollAreaX from "../components/ScrollAreaX";
 import { CameraIcon, CloseIcon, PlusIcon } from "../home/icons";
 
 const KINDS = ["유산소", "근력", "스트레칭", "직접 입력"];
@@ -57,14 +58,18 @@ export default function RecordScreen() {
         </button>
 
         <Section title="사진" meta={`선택  ${photos.length} / 5`}>
-          <div className="flex gap-2.5">
+          <ScrollAreaX className="-mx-5 px-5">
+          <div className="flex gap-2.5 w-max pt-2 pr-1">
             <button
               type="button"
-              onClick={() => setPhotos((p) => (p.length < 5 ? [...p, p.length + 1] : p))}
-              className="w-[100px] h-[124px] rounded-2xl border-2 border-dashed border-line-strong flex flex-col items-center justify-center gap-2 shrink-0"
+              disabled={photos.length >= 5}
+              onClick={() => setPhotos((p) => (p.length < 5 ? [...p, Math.max(0, ...p) + 1] : p))}
+              className="w-[100px] h-[124px] rounded-2xl border-2 border-dashed border-line-strong flex flex-col items-center justify-center gap-2 shrink-0 disabled:opacity-40"
             >
               <CameraIcon />
-              <span className="text-[11px] font-bold text-label-subtle">추가</span>
+              <span className="text-[11px] font-bold text-label-subtle">
+                {photos.length >= 5 ? "가득 참" : "추가"}
+              </span>
             </button>
             {photos.map((id) => (
               <div key={id} className="relative w-[100px] h-[124px] rounded-2xl bg-fill-subtle shrink-0">
@@ -81,6 +86,7 @@ export default function RecordScreen() {
               </div>
             ))}
           </div>
+          </ScrollAreaX>
         </Section>
 
         <Section title="무슨 운동인가요">

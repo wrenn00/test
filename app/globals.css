@@ -38,3 +38,11 @@ body {
   -ms-overflow-style: none;
 }
 .no-scrollbar::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
+.no-scrollbar-x {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar-x::-webkit-scrollbar { width: 0; height: 0; display: none; }
