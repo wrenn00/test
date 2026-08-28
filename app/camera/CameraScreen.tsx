@@ -42,7 +42,7 @@ export default function CameraScreen({ day, plan }: { day: number; plan?: string
       </div>
 
       {/* 컨트롤 */}
-      <div className="pb-10 px-8 flex items-center justify-between">
+      <div className="pb-4 px-8 flex items-center justify-between">
         <button type="button" onClick={next} className="w-12 h-12 rounded-[12px] bg-white/15 grid place-items-center" aria-label="앨범에서 고르기">
           <svg width="22" height="20" viewBox="0 0 22 20" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round" aria-hidden>
             <rect x="1" y="1" width="20" height="18" rx="4" />
@@ -59,6 +59,18 @@ export default function CameraScreen({ day, plan }: { day: number; plan?: string
             <path d="M3 8a8 8 0 0 1 14-4M19 12a8 8 0 0 1-14 4" />
             <path d="M3 3v5h5M19 17v-5h-5" />
           </svg>
+        </button>
+      </div>
+
+      <div className="pb-8 flex justify-center">
+        <button
+          type="button"
+          onClick={() =>
+            router.push(`/record?d=${day}&shot=0${plan ? `&plan=${encodeURIComponent(plan)}` : ""}`)
+          }
+          className="px-4 py-3 text-[13px] font-bold text-white/55"
+        >
+          사진 없이 기록하기
         </button>
       </div>
     </div>

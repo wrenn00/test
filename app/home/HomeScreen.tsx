@@ -16,11 +16,12 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
   const [popup, setPopup] = useState(initial === "mission");
   const [collapsed, setCollapsed] = useState(false);
   const [monthOpen, setMonthOpen] = useState(false);
-  const { plans: storePlans, recorded } = useStore();
+  const { plans: storePlans, recorded, withPhoto } = useStore();
   const [sheet, setSheet] = useState<{ mode: "add" } | { mode: "edit"; plan: Plan } | null>(null);
 
   const isDone = state === "done" || recorded;
-  const photos = isDone ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
+  const photos = isDone && withPhoto ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
+  const noPhotoDays = isDone && !withPhoto ? [TODAY] : [];
   const plans: Plan[] = state === "planned" || state === "done" || recorded ? storePlans : [];
 
   return (
@@ -35,7 +36,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
 
         <div className="px-5 pt-6 pb-8 flex flex-col gap-6">
           <Summary count={photos.length} onMonth={() => setMonthOpen(true)} />
-          <Calendar photos={photos} router={router} />
+          <Calendar photos={photos} noPhoto={noPhotoDays} router={router} />
           {state === "mission" ? (
             <MissionCard onAccept={() => setState("planned")} onReject={() => setState("noplan")} />
           ) : (
@@ -118,7 +119,7 @@ function Summary({ count, onMonth }: { count: number; onMonth: () => void }) {
   );
 }
 
-function Calendar({ photos, router }: { photos: number[]; router: ReturnType<typeof useRouter> }) {
+function Calendar({ photos, noPhoto, router }: { photos: number[]; noPhoto: number[]; router: ReturnType<typeof useRouter> }) {
   const cells: (number | null)[] = [...Array<null>(5).fill(null), ...Array.from({ length: 31 }, (_, i) => i + 1)];
   while (cells.length % 7 !== 0) cells.push(null);
   const weeks = Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7));
@@ -147,8 +148,15 @@ function Calendar({ photos, router }: { photos: number[]; router: ReturnType<typ
                 className="relative w-[43px] h-[60px]"
               >
                 {hasPhoto && <div className="absolute inset-0 rounded-[8px] bg-fill-subtle" />}
+                {!hasPhoto && noPhoto.includes(day) && (
+                  <span className="absolute left-1/2 -translate-x-1/2 bottom-2.5 w-1.5 h-1.5 rounded-full bg-label" />
+                )}
                 {isToday && (
-                  <div className={`absolute inset-0 rounded-[8px] border-2 border-label ${hasPhoto ? "" : "border-dashed"}`} />
+                  <div
+                    className={`absolute inset-0 rounded-[8px] border-2 border-label ${
+                      hasPhoto || noPhoto.includes(day) ? "" : "border-dashed"
+                    }`}
+                  />
                 )}
                 <span className={`absolute left-1.5 top-1.5 text-[11px] ${hasPhoto || isToday ? "font-bold" : ""} ${tone}`}>
                   {day}

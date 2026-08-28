@@ -3,9 +3,9 @@
 import { useSyncExternalStore } from "react";
 import { BASE_PLANS, type Plan } from "./home/types";
 
-type State = { plans: Plan[]; recorded: boolean };
+type State = { plans: Plan[]; recorded: boolean; withPhoto: boolean };
 
-let state: State = { plans: BASE_PLANS, recorded: false };
+let state: State = { plans: BASE_PLANS, recorded: false, withPhoto: true };
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -41,16 +41,17 @@ export const store = {
     emit();
   },
   /** 기록 저장: 계획에 있으면 완료 처리, 없으면 완료된 항목으로 추가 */
-  record(name: string, minutes: number) {
+  record(name: string, minutes: number, withPhoto = true) {
     const has = state.plans.some((p) => p.name === name);
     state.plans = has
       ? state.plans.map((p) => (p.name === name ? { ...p, done: true, sub: `${minutes}분` } : p))
       : [...state.plans, { name, sub: `${minutes}분`, done: true }];
     state.recorded = true;
+    state.withPhoto = withPhoto;
     emit();
   },
   reset() {
-    state = { plans: BASE_PLANS, recorded: false };
+    state = { plans: BASE_PLANS, recorded: false, withPhoto: true };
     emit();
   },
 };

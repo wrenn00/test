@@ -27,15 +27,15 @@ export default function RecordScreen({
   initialDay = 27,
   edit = false,
   initialPlan,
-  shot = false,
+  shot,
 }: {
   initialDay?: number;
   edit?: boolean;
   initialPlan?: string;
-  shot?: boolean;
+  shot?: string;
 }) {
   const router = useRouter();
-  const [photos, setPhotos] = useState(() => (shot ? [1] : [1, 2]));
+  const [photos, setPhotos] = useState(() => (shot === "1" ? [1] : shot === "0" ? [] : [1, 2]));
   const [kind, setKind] = useState(initialPlan ?? "");
   const [minutes, setMinutes] = useState(() => {
     if (!initialPlan) return 30;
@@ -160,7 +160,7 @@ export default function RecordScreen({
           type="button"
           disabled={!kind}
           onClick={() => {
-            if (!edit && day === TODAY) store.record(kind, minutes);
+            if (!edit && day === TODAY) store.record(kind, minutes, photos.length > 0);
             router.push(edit ? `/day?d=${day}` : "/home?s=done");
           }}
           className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold disabled:opacity-35"
