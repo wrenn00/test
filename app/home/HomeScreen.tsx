@@ -14,6 +14,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
   const [popup, setPopup] = useState(initial === "mission");
   const [collapsed, setCollapsed] = useState(false);
   const [monthOpen, setMonthOpen] = useState(false);
+  const [editing, setEditing] = useState<Plan | null>(null);
 
   const photos = state === "done" ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
   const plans: Plan[] =
@@ -45,6 +46,8 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               collapsed={collapsed}
               onToggle={() => setCollapsed((v) => !v)}
               onRecord={() => router.push("/record")}
+              onEdit={(p) => setEditing(p)}
+              onAddPlan={() => router.push("/plan")}
             />
           )}
         </div>
@@ -53,6 +56,8 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
       <BottomNav />
 
       {monthOpen && <MonthSheet onClose={() => setMonthOpen(false)} />}
+
+      {editing && <PlanEditSheet plan={editing} onClose={() => setEditing(null)} />}
 
       {popup && (
         <MissionPopup
@@ -136,12 +141,16 @@ function TodayCard({
   collapsed,
   onToggle,
   onRecord,
+  onEdit,
+  onAddPlan,
 }: {
   state: DayState;
   plans: Plan[];
   collapsed: boolean;
   onToggle: () => void;
   onRecord: () => void;
+  onEdit: (p: Plan) => void;
+  onAddPlan: () => void;
 }) {
   const doneCount = plans.filter((p) => p.done).length;
   const showList = plans.length > 0 && !collapsed;
@@ -173,7 +182,7 @@ function TodayCard({
             plans.map((p, i) => (
               <div key={p.name}>
                 {i > 0 && <div className="h-px bg-line-subtle" />}
-                <div className="flex items-center gap-5 py-3">
+                <button type="button" onClick={() => onEdit(p)} className="w-full flex items-center gap-5 py-3 text-left">
                   <div className="w-10 h-10 rounded-[10px] bg-fill-subtle shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className={`text-[14px] font-bold truncate ${p.done ? "line-through text-label-subtle" : ""}`}>
@@ -193,11 +202,11 @@ function TodayCard({
                   >
                     {p.done && <CheckIcon />}
                   </span>
-                </div>
+                </button>
               </div>
             ))}
           {showList && <div className="h-px bg-line-subtle" />}
-          <button type="button" className="w-full py-3 flex items-center gap-5">
+          <button type="button" onClick={onAddPlan} className="w-full py-3 flex items-center gap-5">
             <span className="w-10 h-10 rounded-[10px] border-2 border-dashed border-line-strong grid place-items-center shrink-0">
               <PlusIcon />
             </span>
@@ -282,6 +291,69 @@ function MissionPopup({
             오늘은 안 할래요
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PlanEditSheet({ plan, onClose }: { plan: Plan; onClose: () => void }) {
+  const [minutes, setMinutes] = useState(parseInt(plan.sub, 10) || 30);
+  const [memo, setMemo] = useState("한강 러닝");
+  const MEMO_MAX = 30;
+
+  return (
+    <div className="absolute inset-0 z-30">
+      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
+      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9 flex flex-col gap-5">
+        <div className="flex justify-center">
+          <span className="w-10 h-1 rounded-full bg-line-strong" />
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-[19px] font-extrabold">{plan.name}</span>
+          <button type="button" onClick={onClose} className="px-3 py-2 rounded-full bg-fill-subtle text-[11px] font-bold text-label-subtle">
+            계획 삭제
+          </button>
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          <span className="text-[14px] font-bold">얼마나 할까요</span>
+          <div className="flex items-center justify-between px-[18px] py-3.5 rounded-2xl bg-fill-subtle">
+            <button type="button" onClick={() => setMinutes((m) => Math.max(5, m - 5))} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label="감소">
+              <svg width="16" height="2" viewBox="0 0 16 2" aria-hidden><rect width="16" height="2" rx="1" fill="#191f28" /></svg>
+            </button>
+            <div className="flex items-baseline gap-1">
+              <span className="text-[28px] font-extrabold leading-none">{minutes}</span>
+              <span className="text-[14px] font-medium text-label-subtle">분</span>
+            </div>
+            <button type="button" onClick={() => setMinutes((m) => Math.min(300, m + 5))} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label="증가">
+              <PlusIcon />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          <div className="flex items-center justify-between">
+            <span className="text-[14px] font-bold">한 줄 메모</span>
+            <span className="text-[11px] text-label-disabled">선택</span>
+          </div>
+          <div className="flex items-center gap-3 px-4 h-[52px] rounded-[14px] bg-fill-subtle">
+            <input
+              value={memo}
+              maxLength={MEMO_MAX}
+              onChange={(e) => setMemo(e.target.value)}
+              placeholder="예) 한강 러닝"
+              className="flex-1 bg-transparent text-[14px] font-bold outline-none placeholder:font-medium placeholder:text-label-disabled"
+            />
+            <span className={`text-[11px] shrink-0 ${memo.length > MEMO_MAX * 0.66 ? "text-label-subtle font-bold" : "text-label-disabled"}`}>
+              {memo.length} / {MEMO_MAX}
+            </span>
+          </div>
+        </div>
+
+        <button type="button" onClick={onClose} className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold">
+          저장
+        </button>
       </div>
     </div>
   );
