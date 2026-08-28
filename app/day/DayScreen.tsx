@@ -6,11 +6,14 @@ import { labelOf, photosOf } from "../home/types";
 import { BackIcon } from "../home/icons";
 import ScrollArea from "../components/ScrollArea";
 import { useDragX } from "../components/useDragX";
+import { ActionSheet, ConfirmDialog } from "../components/ActionSheet";
 
 export default function DayScreen({ day }: { day: number }) {
   const router = useRouter();
   const total = photosOf(day);
   const [index, setIndex] = useState(0);
+  const [sheet, setSheet] = useState(false);
+  const [confirm, setConfirm] = useState(false);
 
   return (
     <div className="h-full flex flex-col bg-bg">
@@ -19,7 +22,7 @@ export default function DayScreen({ day }: { day: number }) {
           <BackIcon />
         </button>
         <span className="text-[15px] font-bold">{labelOf(day)}</span>
-        <button type="button" className="w-11 h-11 -mr-3 grid place-items-center" aria-label="더보기">
+        <button type="button" onClick={() => setSheet(true)} className="w-11 h-11 -mr-3 grid place-items-center" aria-label="더보기">
           <span className="flex flex-col gap-[3px]">
             {[0, 1, 2].map((i) => (
               <span key={i} className="w-1 h-1 rounded-full bg-label" />
@@ -60,6 +63,39 @@ export default function DayScreen({ day }: { day: number }) {
           </button>
         </div>
       </ScrollArea>
+
+      {sheet && (
+        <ActionSheet
+          onClose={() => setSheet(false)}
+          items={[
+            { title: "사진 저장", desc: "이 날 사진을 기기에 저장" },
+            { title: "기록 수정", desc: "운동, 시간, 느낌, 메모 고치기" },
+            {
+              title: "기록 삭제",
+              desc: "사진과 내역 전부 지움",
+              onClick: () => {
+                setSheet(false);
+                setConfirm(true);
+              },
+            },
+          ]}
+        />
+      )}
+
+      {confirm && (
+        <ConfirmDialog
+          title="이 기록을 삭제할까요?"
+          body={
+            <>
+              사진 {total}장과 운동 내역이 함께 지워져요.
+              <br />
+              삭제하면 되돌릴 수 없어요.
+            </>
+          }
+          onCancel={() => setConfirm(false)}
+          onConfirm={() => router.push("/home?s=done")}
+        />
+      )}
     </div>
   );
 }

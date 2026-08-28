@@ -228,15 +228,6 @@ function MissionCard({ onAccept, onReject }: { onAccept: () => void; onReject: (
         </div>
       </div>
       <div className="h-px bg-line-subtle" />
-      <div className="px-5 py-3.5 flex flex-col gap-1">
-        <span className="text-[11px] font-bold text-label-disabled">왜 이 미션인가요</span>
-        <span className="text-[11px] text-label-subtle leading-relaxed">
-          {MISSION.reason[0]}
-          <br />
-          {MISSION.reason[1]}
-        </span>
-      </div>
-      <div className="h-px bg-line-subtle" />
       <div className="px-5 pt-4 pb-4 flex flex-col gap-1">
         <button type="button" onClick={onAccept} className="w-full py-4 rounded-[14px] bg-label text-white text-[15px] font-bold">
           이걸로 할게요

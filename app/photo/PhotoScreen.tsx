@@ -4,11 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { labelOf, photosOf } from "../home/types";
 import { useDragX } from "../components/useDragX";
+import { ActionSheet, ConfirmDialog } from "../components/ActionSheet";
 
 export default function PhotoScreen({ day, initial }: { day: number; initial: number }) {
   const router = useRouter();
   const total = photosOf(day);
   const [index, setIndex] = useState(Math.min(initial, total - 1));
+  const [sheet, setSheet] = useState(false);
+  const [confirm, setConfirm] = useState(false);
   const { dx, dragging, handlers } = useDragX({
     onPrev: () => setIndex((i) => Math.max(0, i - 1)),
     onNext: () => setIndex((i) => Math.min(total - 1, i + 1)),
@@ -25,7 +28,7 @@ export default function PhotoScreen({ day, initial }: { day: number; initial: nu
         <span className="text-[14px] font-bold">
           {index + 1} / {total}
         </span>
-        <button type="button" className="w-11 h-11 -mr-3 grid place-items-center" aria-label="더보기">
+        <button type="button" onClick={() => setSheet(true)} className="w-11 h-11 -mr-3 grid place-items-center" aria-label="더보기">
           <span className="flex flex-col gap-[3px]">
             {[0, 1, 2].map((i) => (
               <span key={i} className="w-1 h-1 rounded-full bg-white" />
@@ -73,6 +76,42 @@ export default function PhotoScreen({ day, initial }: { day: number; initial: nu
           </button>
         </div>
       </div>
+
+      {sheet && (
+        <ActionSheet
+          dark
+          onClose={() => setSheet(false)}
+          items={[
+            { title: "사진 저장", desc: "이 사진 1장을 기기에 저장" },
+            { title: "대표 사진으로", desc: "달력에 이 사진이 보인다" },
+            {
+              title: "사진 삭제",
+              desc: "이 사진 1장만 지움. 기록은 남는다",
+              onClick: () => {
+                setSheet(false);
+                setConfirm(true);
+              },
+            },
+          ]}
+        />
+      )}
+
+      {confirm && (
+        <ConfirmDialog
+          dark
+          thumb
+          title="이 사진을 삭제할까요?"
+          body={
+            <>
+              남은 사진 {Math.max(0, total - 1)}장과 운동 내역은
+              <br />
+              그대로 있어요.
+            </>
+          }
+          onCancel={() => setConfirm(false)}
+          onConfirm={() => router.push(`/day?d=${day}`)}
+        />
+      )}
     </div>
   );
 }
