@@ -68,7 +68,7 @@ export default function DayScreen({ day }: { day: number }) {
 
               <button
                 type="button"
-                onClick={() => router.push(`/record?d=${day}&edit=1`)}
+                onClick={() => router.push(`/camera?d=${day}`)}
                 className="w-full py-4 rounded-[14px] border border-line-strong text-[14px] font-bold"
               >
                 사진 추가
@@ -101,7 +101,7 @@ export default function DayScreen({ day }: { day: number }) {
 
             <button
               type="button"
-              onClick={() => router.push(`/record?d=${day}`)}
+              onClick={() => router.push(`/camera?d=${day}`)}
               className="w-full py-4 rounded-[14px] bg-label text-white text-[15px] font-bold"
             >
               이 날 기록 추가하기

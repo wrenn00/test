@@ -48,7 +48,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               onToggleDone={(p) =>
                 p.done
                   ? router.push(`/day?d=${TODAY}`)
-                  : router.push(`/record?d=${TODAY}&plan=${encodeURIComponent(p.name)}`)
+                  : router.push(`/camera?d=${TODAY}&plan=${encodeURIComponent(p.name)}`)
               }
               onAddPlan={() => setSheet({ mode: "add" })}
             />
@@ -73,7 +73,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               ? (d: PlanDraft) => {
                   store.addPlan({ name: d.name, sub: `${d.minutes}분`, done: false });
                   setSheet(null);
-                  router.push(`/record?d=${TODAY}&plan=${encodeURIComponent(d.name)}`);
+                  router.push(`/camera?d=${TODAY}&plan=${encodeURIComponent(d.name)}`);
                 }
               : undefined
           }

@@ -27,13 +27,15 @@ export default function RecordScreen({
   initialDay = 27,
   edit = false,
   initialPlan,
+  shot = false,
 }: {
   initialDay?: number;
   edit?: boolean;
   initialPlan?: string;
+  shot?: boolean;
 }) {
   const router = useRouter();
-  const [photos, setPhotos] = useState([1, 2]);
+  const [photos, setPhotos] = useState(() => (shot ? [1] : [1, 2]));
   const [kind, setKind] = useState(initialPlan ?? "");
   const [minutes, setMinutes] = useState(() => {
     if (!initialPlan) return 30;
