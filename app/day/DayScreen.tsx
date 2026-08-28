@@ -5,6 +5,7 @@ import { useState } from "react";
 import { labelOf, photosOf } from "../home/types";
 import { BackIcon } from "../home/icons";
 import ScrollArea from "../components/ScrollArea";
+import { useDragX } from "../components/useDragX";
 
 export default function DayScreen({ day }: { day: number }) {
   const router = useRouter();
@@ -85,20 +86,33 @@ function Carousel({
   setIndex: (i: number) => void;
   onOpen: () => void;
 }) {
+  const { dx, dragging, handlers, didMove } = useDragX({
+    onPrev: () => setIndex(Math.max(0, index - 1)),
+    onNext: () => setIndex(Math.min(total - 1, index + 1)),
+  });
+
   return (
-    <div className="relative w-[375px] h-[300px] my-6 overflow-hidden">
-      <div className="absolute left-[-190px] top-[26px] w-[240px] h-[248px] rounded-[20px] bg-fill-subtle opacity-50" />
-      <div className="absolute left-[325px] top-[26px] w-[240px] h-[248px] rounded-[20px] bg-fill-subtle opacity-50" />
-      <button
-        type="button"
-        onClick={onOpen}
-        className="absolute left-16 top-1.5 w-[247px] h-[288px] rounded-[20px] bg-fill-subtle"
-        aria-label="사진 크게 보기"
+    <div className="relative w-[375px] h-[300px] my-6 overflow-hidden select-none">
+      <div
+        {...handlers}
+        onClick={() => {
+          if (!didMove()) onOpen();
+        }}
+        className={`absolute inset-0 ${dragging ? "cursor-grabbing" : "cursor-grab"}`}
+        style={{
+          transform: `translateX(${dx * 0.6}px)`,
+          transition: dragging ? "none" : "transform 240ms cubic-bezier(0.2,0,0,1)",
+        }}
       >
-        <span className="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-label text-white text-[11px] font-bold">
-          {index + 1} / {total}
-        </span>
-      </button>
+        <div className="absolute left-[-190px] top-[26px] w-[240px] h-[248px] rounded-[20px] bg-fill-subtle opacity-50" />
+        <div className="absolute left-[325px] top-[26px] w-[240px] h-[248px] rounded-[20px] bg-fill-subtle opacity-50" />
+        <div className="absolute left-16 top-1.5 w-[247px] h-[288px] rounded-[20px] bg-fill-subtle">
+          <span className="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-label text-white text-[11px] font-bold">
+            {index + 1} / {total}
+          </span>
+        </div>
+      </div>
+
       <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-1.5">
         {Array.from({ length: total }, (_, i) => (
           <button

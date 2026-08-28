@@ -3,11 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { labelOf, photosOf } from "../home/types";
+import { useDragX } from "../components/useDragX";
 
 export default function PhotoScreen({ day, initial }: { day: number; initial: number }) {
   const router = useRouter();
   const total = photosOf(day);
   const [index, setIndex] = useState(Math.min(initial, total - 1));
+  const { dx, dragging, handlers } = useDragX({
+    onPrev: () => setIndex((i) => Math.max(0, i - 1)),
+    onNext: () => setIndex((i) => Math.min(total - 1, i + 1)),
+  });
 
   return (
     <div className="relative h-full bg-label flex flex-col">
@@ -29,8 +34,14 @@ export default function PhotoScreen({ day, initial }: { day: number; initial: nu
         </button>
       </div>
 
-      <div className="relative flex-1">
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[500px] bg-fill-subtle" />
+      <div className={`relative flex-1 select-none ${dragging ? "cursor-grabbing" : "cursor-grab"}`} {...handlers}>
+        <div
+          className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[500px] bg-fill-subtle"
+          style={{
+            transform: `translateX(${dx * 0.6}px)`,
+            transition: dragging ? "none" : "transform 240ms cubic-bezier(0.2,0,0,1)",
+          }}
+        />
         {total > 1 && (
           <>
             <Arrow dir="left" disabled={index === 0} onClick={() => setIndex((i) => Math.max(0, i - 1))} />
