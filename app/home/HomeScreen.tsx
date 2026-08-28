@@ -5,7 +5,6 @@ import { useState } from "react";
 import { MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from "./types";
 import ScrollArea from "../components/ScrollArea";
 import PlanSheet, { type PlanDraft } from "../components/PlanSheet";
-import TabBar from "../components/TabBar";
 import { store, useStore } from "../store";
 import { BellIcon, CheckIcon, ChevronDown, ChevronUp, PlusIcon } from "./icons";
 
@@ -26,7 +25,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
 
   return (
     <div className="relative h-full flex flex-col bg-bg">
-      <ScrollArea className="flex-1 pb-[98px]">
+      <ScrollArea className="flex-1 pb-8">
         <div className="px-5 pt-14 h-[94px] flex items-center justify-between">
           <span className="text-[22px] font-extrabold tracking-tight">LOGO</span>
           <button type="button" onClick={() => router.push("/notifications")} aria-label="알림">
@@ -54,7 +53,6 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
         </div>
       </ScrollArea>
 
-      <TabBar active="home" />
 
       {monthOpen && <MonthSheet onClose={() => setMonthOpen(false)} />}
 
