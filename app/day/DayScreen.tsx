@@ -101,6 +101,11 @@ function Carousel({
           <span className="absolute right-3 top-3 px-2.5 py-1 rounded-full bg-label text-white text-[11px] font-bold">
             {index + 1} / {total}
           </span>
+          <span className="absolute right-3 bottom-3 w-[34px] h-[34px] rounded-full bg-label/85 grid place-items-center">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M5 0H0v5M0 0l6 6M11 16h5v-5M16 16l-6-6" />
+            </svg>
+          </span>
         </div>
       </div>
 
