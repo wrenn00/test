@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const PROVIDERS = [
   {
     key: "kakao",
@@ -30,15 +32,15 @@ export default function LoginScreen() {
 
       <section className="mt-auto px-6 pb-[72px] flex flex-col gap-2.5">
         {PROVIDERS.map((p) => (
-          <button
+          <Link
             key={p.key}
-            type="button"
+            href="/home"
             className={`h-[52px] w-full rounded-[12px] flex items-center px-4 ${p.className}`}
           >
             <span className="w-6 h-6 grid place-items-center shrink-0">{p.logo}</span>
             <span className="flex-1 text-center text-[15px] font-bold">{p.label}</span>
             <span className="w-6 h-6 shrink-0" aria-hidden />
-          </button>
+          </Link>
         ))}
       </section>
     </div>
