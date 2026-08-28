@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BASE_PLANS, MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from "./types";
 import ScrollArea from "../components/ScrollArea";
-import { BellIcon, ChatIcon, ChevronDown, ChevronUp, CheckIcon, CloseIcon, HomeIcon, PersonIcon, PlusIcon } from "./icons";
+import { BellIcon, ChatIcon, ChevronDown, ChevronUp, CheckIcon, HomeIcon, PersonIcon, PlusIcon } from "./icons";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
@@ -247,9 +247,6 @@ function MissionPopup({ onClose }: { onClose: () => void }) {
     <div className="absolute inset-0 z-20">
       <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/50" />
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[303px] rounded-3xl bg-bg px-6 pt-6 pb-5 flex flex-col items-center gap-6">
-        <button type="button" onClick={onClose} className="absolute right-2 top-2 w-11 h-11 grid place-items-center" aria-label="닫기">
-          <CloseIcon />
-        </button>
         <div className="relative w-[180px] h-[150px] rounded-2xl bg-fill-subtle">
           <svg className="absolute inset-0" width="180" height="150" aria-hidden>
             <line x1="0" y1="0" x2="180" y2="150" stroke="#e5e8eb" />
