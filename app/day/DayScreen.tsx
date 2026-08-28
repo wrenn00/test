@@ -16,6 +16,7 @@ export default function DayScreen({ day }: { day: number }) {
   const [index, setIndex] = useState(0);
   const [sheet, setSheet] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [plans, setPlans] = useState<string[][]>([["유산소", "한강 러닝 40분"], ["스트레칭", "자기 전 10분"]]);
 
   return (
     <div className="h-full flex flex-col bg-bg">
@@ -121,10 +122,10 @@ export default function DayScreen({ day }: { day: number }) {
             <div className="rounded-[20px] border border-line-normal">
               <div className="px-5 pt-[18px] pb-1.5 flex items-center justify-between">
                 <span className="text-[15px] font-bold">이 날의 계획</span>
-                <span className="text-[11px] font-bold text-label-subtle">2개</span>
+                <span className="text-[11px] font-bold text-label-subtle">{plans.length}개</span>
               </div>
               <div className="px-5 pb-[18px]">
-                {[["유산소", "한강 러닝 40분"], ["스트레칭", "자기 전 10분"]].map(([n, sub], i) => (
+                {plans.map(([n, sub], i) => (
                   <div key={n}>
                     {i > 0 && <div className="h-px bg-line-subtle" />}
                     <div className="flex items-center gap-5 py-3">
@@ -133,7 +134,7 @@ export default function DayScreen({ day }: { day: number }) {
                         <span className="block text-[14px] font-bold truncate">{n}</span>
                         <span className="block text-[11px] text-label-disabled truncate">{sub}</span>
                       </span>
-                      <button type="button" className="w-6 h-6 grid place-items-center" aria-label="계획 삭제">
+                      <button type="button" onClick={() => setPlans((v) => v.filter((x) => x[0] !== n))} className="w-6 h-6 grid place-items-center" aria-label="계획 삭제">
                         <svg width="12" height="12" viewBox="0 0 12 12" stroke="#aeb4bc" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
                           <path d="M1 1l10 10M11 1L1 11" />
                         </svg>

@@ -67,6 +67,7 @@ export default function PhotoScreen({ day, initial }: { day: number; initial: nu
           ))}
           <button
             type="button"
+            onClick={() => router.push(`/record?d=${day}&edit=1`)}
             className="w-14 h-14 rounded-[10px] border-2 border-dashed border-white/40 grid place-items-center"
             aria-label="사진 추가"
           >

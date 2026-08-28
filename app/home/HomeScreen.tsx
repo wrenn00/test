@@ -332,7 +332,7 @@ function MonthSheet({ onClose }: { onClose: () => void }) {
           <span className="w-10 h-1 rounded-full bg-line-strong" />
         </div>
         <div className="flex items-center justify-between pb-4">
-          <button type="button" className="w-11 h-11 grid place-items-center" aria-label="이전 해">
+          <button type="button" disabled className="w-11 h-11 grid place-items-center opacity-30" aria-label="이전 해">
             <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#191f28" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M7 1 1 7l6 6" />
             </svg>
