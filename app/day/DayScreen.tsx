@@ -29,15 +29,6 @@ export default function DayScreen({ day }: { day: number }) {
       </div>
 
       <ScrollArea className="flex-1 pb-6">
-        <div className="px-5 flex items-center justify-between text-[12px] font-bold text-label-subtle">
-          <button type="button" onClick={() => router.push(`/day?d=${Math.max(1, day - 1)}`)}>
-            ‹ 8월 {day - 1}일
-          </button>
-          <button type="button" onClick={() => router.push(`/day?d=${Math.min(31, day + 1)}`)}>
-            8월 {day + 1}일 ›
-          </button>
-        </div>
-
         <Carousel day={day} total={total} index={index} setIndex={setIndex} onOpen={() => router.push(`/photo?d=${day}&i=${index}`)} />
 
         <div className="px-5 flex flex-col gap-6">
