@@ -6,7 +6,9 @@
   --label-subtle: #4e5968;
   --label-disabled: #8b95a1;
   --fill-subtle: #f2f4f6;
+  --line-subtle: #f2f4f6;
   --line-normal: #e5e8eb;
+  --line-strong: #d1d6db;
   --kakao: #fee500;
   --kakao-ink: #191600;
 }
@@ -17,7 +19,9 @@
   --color-label-subtle: var(--label-subtle);
   --color-label-disabled: var(--label-disabled);
   --color-fill-subtle: var(--fill-subtle);
+  --color-line-subtle: var(--line-subtle);
   --color-line-normal: var(--line-normal);
+  --color-line-strong: var(--line-strong);
   --color-kakao: var(--kakao);
   --color-kakao-ink: var(--kakao-ink);
 }
