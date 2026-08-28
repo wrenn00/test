@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ScrollArea from "../components/ScrollArea";
 import DurationField from "../components/DurationField";
+import DateSheet from "../components/DateSheet";
 import { TODAY } from "../home/types";
 import { store, useStore } from "../store";
 import ScrollAreaX from "../components/ScrollAreaX";
@@ -15,23 +16,12 @@ type PlanOption = { name: string; minutes: number; done: boolean };
 const FEELINGS = ["가뿐했어요", "적당했어요", "힘들었어요"];
 const MEMO_MAX = 200;
 
-const RECENT_DAYS = [27, 26, 25, 24, 23];
-
-function recentWith(day: number) {
-  return RECENT_DAYS.includes(day) ? RECENT_DAYS : [day, ...RECENT_DAYS].slice(0, 5);
-}
-
 function dayLabel(day: number) {
   const d = new Date(2026, 7, day);
   const w = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
   return `8월 ${day}일 ${w}요일`;
 }
-function relative(day: number) {
-  if (day === 27) return "오늘";
-  if (day === 26) return "어제";
-  if (day === 25) return "그제";
-  return "";
-}
+
 
 export default function RecordScreen({ initialDay = 27, edit = false }: { initialDay?: number; edit?: boolean }) {
   const router = useRouter();
@@ -203,7 +193,7 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
       </div>
 
       {picker && (
-        <DatePicker
+        <DateSheet
           selected={day}
           onSelect={(d) => {
             setDay(d);
@@ -216,53 +206,6 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
   );
 }
 
-function DatePicker({
-  selected,
-  onSelect,
-  onClose,
-}: {
-  selected: number;
-  onSelect: (d: number) => void;
-  onClose: () => void;
-}) {
-  return (
-    <div className="absolute inset-0 z-30">
-      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
-      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9">
-        <div className="flex justify-center pb-3">
-          <span className="w-10 h-1 rounded-full bg-line-strong" />
-        </div>
-        <div className="pb-2">
-          <span className="text-[15px] font-bold">언제 한 운동인가요</span>
-        </div>
-        {recentWith(selected).map((d, i) => (
-          <div key={d}>
-            {i > 0 && <div className="h-px bg-line-subtle" />}
-            <button
-              type="button"
-              onClick={() => onSelect(d)}
-              className="w-full flex items-center justify-between py-3.5"
-            >
-              <span className="flex items-center gap-2.5">
-                <span className="text-[14px] font-bold">{dayLabel(d)}</span>
-                {relative(d) && (
-                  <span className="px-2 py-0.5 rounded-md bg-fill-subtle text-[11px] font-bold text-label-subtle">
-                    {relative(d)}
-                  </span>
-                )}
-              </span>
-              {selected === d && (
-                <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#191f28" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M1 5.5 5 9.5 13 1.5" />
-                </svg>
-              )}
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 function Section({ title, meta, children }: { title: string; meta?: string; children: React.ReactNode }) {
   return (
