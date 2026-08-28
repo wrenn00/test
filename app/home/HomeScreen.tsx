@@ -13,6 +13,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
   const [state, setState] = useState<DayState>(initial);
   const [popup, setPopup] = useState(initial === "mission");
   const [collapsed, setCollapsed] = useState(false);
+  const [monthOpen, setMonthOpen] = useState(false);
 
   const photos = state === "done" ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
   const plans: Plan[] =
@@ -27,11 +28,13 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
       <ScrollArea className="flex-1 pb-[98px]">
         <div className="px-5 pt-14 h-[94px] flex items-center justify-between">
           <span className="text-[22px] font-extrabold tracking-tight">LOGO</span>
-          <BellIcon />
+          <button type="button" onClick={() => router.push("/notifications")} aria-label="알림">
+            <BellIcon />
+          </button>
         </div>
 
         <div className="px-5 pt-6 pb-8 flex flex-col gap-6">
-          <Summary count={photos.length} />
+          <Summary count={photos.length} onMonth={() => setMonthOpen(true)} />
           <Calendar photos={photos} router={router} />
           {state === "mission" ? (
             <MissionCard onAccept={() => setState("planned")} onReject={() => setState("noplan")} />
@@ -48,6 +51,8 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
       </ScrollArea>
 
       <BottomNav />
+
+      {monthOpen && <MonthSheet onClose={() => setMonthOpen(false)} />}
 
       {popup && (
         <MissionPopup
@@ -66,10 +71,10 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
   );
 }
 
-function Summary({ count }: { count: number }) {
+function Summary({ count, onMonth }: { count: number; onMonth: () => void }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <button type="button" className="flex items-center gap-1 text-[13px] font-medium text-label-subtle">
+      <button type="button" onClick={onMonth} className="flex items-center gap-1 text-[13px] font-medium text-label-subtle">
         2026년 8월
         <ChevronDown />
       </button>
@@ -276,6 +281,47 @@ function MissionPopup({
           <button type="button" onClick={onReject} className="w-full pt-3.5 pb-2 text-[14px] font-bold text-label-disabled">
             오늘은 안 할래요
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MonthSheet({ onClose }: { onClose: () => void }) {
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  return (
+    <div className="absolute inset-0 z-30">
+      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
+      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9">
+        <div className="flex justify-center pb-3">
+          <span className="w-10 h-1 rounded-full bg-line-strong" />
+        </div>
+        <div className="flex items-center justify-between pb-4">
+          <button type="button" className="w-11 h-11 grid place-items-center" aria-label="이전 해">
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#191f28" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M7 1 1 7l6 6" />
+            </svg>
+          </button>
+          <span className="text-[16px] font-bold">2026년</span>
+          <button type="button" disabled className="w-11 h-11 grid place-items-center opacity-30" aria-label="다음 해">
+            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#191f28" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M1 1l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
+        <div className="grid grid-cols-3 gap-2.5">
+          {months.map((m) => (
+            <button
+              key={m}
+              type="button"
+              onClick={onClose}
+              className={`h-14 rounded-[14px] text-[14px] font-bold ${
+                m === 8 ? "bg-label text-white" : "bg-fill-subtle"
+              }`}
+            >
+              {m}월
+            </button>
+          ))}
         </div>
       </div>
     </div>
