@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BASE_PLANS, MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from "./types";
+import ScrollArea from "../components/ScrollArea";
 import { BellIcon, ChatIcon, ChevronDown, ChevronUp, CheckIcon, CloseIcon, HomeIcon, PersonIcon, PlusIcon } from "./icons";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -23,7 +24,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
 
   return (
     <div className="relative h-full flex flex-col bg-bg">
-      <div className="flex-1 overflow-y-auto">
+      <ScrollArea className="flex-1 pb-[98px]">
         <div className="px-5 pt-14 h-[94px] flex items-center justify-between">
           <span className="text-[22px] font-extrabold tracking-tight">LOGO</span>
           <BellIcon />
@@ -44,7 +45,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
             />
           )}
         </div>
-      </div>
+      </ScrollArea>
 
       <BottomNav />
 
@@ -297,7 +298,7 @@ function BottomNav() {
     { label: "마이", icon: <PersonIcon />, active: false },
   ];
   return (
-    <nav className="h-[98px] shrink-0 border-t border-line-subtle bg-bg flex">
+    <nav className="absolute bottom-0 inset-x-0 h-[98px] flex bg-white/70 backdrop-blur-xl border-t border-white/60">
       {tabs.map((tab) => (
         <div key={tab.label} className="flex-1 flex flex-col items-center pt-3 gap-1.5">
           {tab.icon}

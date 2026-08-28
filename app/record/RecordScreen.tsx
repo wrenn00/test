@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import ScrollArea from "../components/ScrollArea";
 import { CameraIcon, CloseIcon, PlusIcon } from "../home/icons";
 
 const KINDS = ["유산소", "근력", "스트레칭", "직접 입력"];
@@ -17,7 +18,7 @@ export default function RecordScreen() {
   const [memo, setMemo] = useState("");
 
   return (
-    <div className="h-full flex flex-col bg-bg">
+    <div className="relative h-full flex flex-col bg-bg">
       <div className="px-5 pt-14 h-[100px] flex items-center justify-between">
         <button type="button" onClick={() => router.back()} className="w-11 h-11 -ml-3 grid place-items-center">
           <CloseIcon />
@@ -26,7 +27,7 @@ export default function RecordScreen() {
         <span className="w-11 h-11" aria-hidden />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-5 pb-6 flex flex-col gap-7">
+      <ScrollArea className="flex-1 px-5 pb-[130px] flex flex-col gap-7">
         <div className="flex items-center justify-between px-[18px] py-4 rounded-2xl bg-fill-subtle">
           <div className="flex flex-col gap-0.5">
             <span className="text-[11px] text-label-disabled">기록할 날짜</span>
@@ -107,9 +108,9 @@ export default function RecordScreen() {
             </span>
           </div>
         </Section>
-      </div>
+      </ScrollArea>
 
-      <div className="shrink-0 border-t border-line-subtle px-5 pt-4 pb-9">
+      <div className="absolute bottom-0 inset-x-0 bg-white/70 backdrop-blur-xl border-t border-white/60 px-5 pt-4 pb-9">
         <button
           type="button"
           onClick={() => router.push("/home?s=done")}

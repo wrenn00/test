@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { labelOf, photosOf } from "../home/types";
 import { BackIcon } from "../home/icons";
+import ScrollArea from "../components/ScrollArea";
 
 export default function DayScreen({ day }: { day: number }) {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function DayScreen({ day }: { day: number }) {
         </button>
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-6">
+      <ScrollArea className="flex-1 pb-6">
         <div className="px-5 flex items-center justify-between text-[12px] font-bold text-label-subtle">
           <button type="button" onClick={() => router.push(`/day?d=${Math.max(1, day - 1)}`)}>
             ‹ 8월 {day - 1}일
@@ -66,7 +67,7 @@ export default function DayScreen({ day }: { day: number }) {
             사진 추가
           </button>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 }
