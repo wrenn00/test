@@ -22,7 +22,7 @@ export default function NotificationScreen({ empty }: { empty: boolean }) {
   const [read, setRead] = useState(false);
 
   return (
-    <div className="h-full flex flex-col bg-bg">
+    <div className="relative h-full flex flex-col bg-bg">
       <div className="px-5 pt-14 h-[100px] flex items-center justify-between">
         <button type="button" onClick={() => router.back()} className="w-11 h-11 -ml-3 grid place-items-center">
           <BackIcon />

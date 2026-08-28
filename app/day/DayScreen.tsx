@@ -19,7 +19,7 @@ export default function DayScreen({ day }: { day: number }) {
   const [plans, setPlans] = useState<string[][]>([["유산소", "한강 러닝 40분"], ["스트레칭", "자기 전 10분"]]);
 
   return (
-    <div className="h-full flex flex-col bg-bg">
+    <div className="relative h-full flex flex-col bg-bg">
       <div className="px-5 pt-14 h-[100px] flex items-center justify-between">
         <button type="button" onClick={() => router.push("/home?s=done")} className="w-11 h-11 -ml-3 grid place-items-center">
           <BackIcon />

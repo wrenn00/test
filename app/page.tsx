@@ -5,7 +5,7 @@ export default function Page() {
     <main className="min-h-screen flex items-center justify-center py-10 px-4">
       <Link
         href="/onboarding"
-        className="w-[375px] h-[812px] bg-bg rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.12)] overflow-hidden flex flex-col items-center justify-center gap-3.5 pb-16"
+        className="relative w-[375px] h-[812px] bg-bg rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.12)] overflow-hidden flex flex-col items-center justify-center gap-3.5 pb-16"
       >
         <span className="w-[88px] h-[88px] rounded-3xl bg-fill-subtle grid place-items-center">
           <svg width="88" height="88" aria-hidden>
