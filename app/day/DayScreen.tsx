@@ -83,7 +83,7 @@ function Carousel({
   });
 
   return (
-    <div className="relative w-[375px] h-[300px] my-6 overflow-hidden select-none">
+    <div className="relative w-[375px] h-[330px] mt-6 mb-6 overflow-hidden select-none">
       <div
         {...handlers}
         onClick={() => {
@@ -104,7 +104,7 @@ function Carousel({
         </div>
       </div>
 
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-1.5">
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-5 flex items-center gap-1.5">
         {Array.from({ length: total }, (_, i) => (
           <button
             key={i}
