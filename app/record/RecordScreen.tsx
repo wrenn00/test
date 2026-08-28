@@ -44,6 +44,7 @@ export default function RecordScreen({
   const [memo, setMemo] = useState("");
   const [day, setDay] = useState(initialDay);
   const [picker, setPicker] = useState(false);
+  const [kindPicker, setKindPicker] = useState(false);
   const { plans: storePlans } = useStore();
   const plansAll: PlanOption[] =
     day === TODAY
@@ -106,58 +107,19 @@ export default function RecordScreen({
           </ScrollAreaX>
         </Section>
 
-        <Section title="무엇을 했나요">
-          {plans.length > 0 && (
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-col gap-2">
-                {plans.map((p) => {
-                  const on = kind === p.name;
-                  return (
-                    <button
-                      key={p.name}
-                      type="button"
-                      onClick={() => {
-                        setKind(p.name);
-                        setMinutes(p.minutes);
-                      }}
-                      className={`flex items-center gap-4 px-4 py-3 rounded-[14px] text-left ${
-                        on ? "bg-label" : "bg-fill-subtle"
-                      }`}
-                    >
-                      <span className={`w-9 h-9 rounded-[10px] shrink-0 ${on ? "bg-white/20" : "bg-bg"}`} />
-                      <span className="flex-1 min-w-0">
-                        <span className={`block text-[14px] font-bold truncate ${on ? "text-white" : ""}`}>{p.name}</span>
-                        <span className={`block text-[11px] ${on ? "text-white/70" : "text-label-disabled"}`}>
-                          계획 {p.minutes}분{p.done ? " · 기록함" : ""}
-                        </span>
-                      </span>
-                      <span
-                        className={`w-[22px] h-[22px] rounded-full shrink-0 grid place-items-center ${
-                          on ? "bg-white" : "border border-line-strong"
-                        }`}
-                      >
-                        {on && (
-                          <svg width="11" height="9" viewBox="0 0 11 9" fill="none" stroke="#191f28" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                            <path d="M1 4.5 4 7.5 10 1" />
-                          </svg>
-                        )}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-col gap-2.5">
-            {plans.length > 0 && <span className="text-[11px] font-bold text-label-subtle">다른 운동</span>}
-            <div className="flex flex-wrap gap-2">
-              {KINDS.map((k) => (
-                <Chip key={k} label={k} active={kind === k} onClick={() => setKind(k)} />
-              ))}
-            </div>
-          </div>
-        </Section>
+        <button
+          type="button"
+          onClick={() => setKindPicker(true)}
+          className="w-full flex items-center justify-between px-[18px] py-4 rounded-2xl bg-fill-subtle text-left"
+        >
+          <span className="flex flex-col gap-0.5">
+            <span className="text-[11px] text-label-disabled">무엇을 했나요</span>
+            <span className={`text-[14px] font-bold ${kind ? "" : "text-label-disabled"}`}>
+              {kind || "운동 선택"}
+            </span>
+          </span>
+          <span className="text-label-disabled text-[18px]">›</span>
+        </button>
 
         <Section title="얼마나 했나요">
           <DurationField value={minutes} onChange={setMinutes} />
@@ -205,6 +167,19 @@ export default function RecordScreen({
         </button>
       </div>
 
+      {kindPicker && (
+        <KindSheet
+          plans={plans}
+          selected={kind}
+          onSelect={(name, min) => {
+            setKind(name);
+            if (min) setMinutes(min);
+            setKindPicker(false);
+          }}
+          onClose={() => setKindPicker(false)}
+        />
+      )}
+
       {picker && (
         <DateSheet
           selected={day}
@@ -246,3 +221,68 @@ function Chip({ label, active, onClick, grow }: { label: string; active: boolean
   );
 }
 
+function KindSheet({
+  plans,
+  selected,
+  onSelect,
+  onClose,
+}: {
+  plans: PlanOption[];
+  selected: string;
+  onSelect: (name: string, minutes?: number) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="absolute inset-0 z-30">
+      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
+      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9">
+        <div className="flex justify-center pb-3">
+          <span className="w-10 h-1 rounded-full bg-line-strong" />
+        </div>
+        <div className="pb-3 text-[15px] font-bold">무엇을 했나요</div>
+
+        {plans.length > 0 && (
+          <div className="flex flex-col gap-2 pb-4">
+            {plans.map((p) => {
+              const on = selected === p.name;
+              return (
+                <button
+                  key={p.name}
+                  type="button"
+                  onClick={() => onSelect(p.name, p.minutes)}
+                  className={`flex items-center gap-4 px-4 py-3 rounded-[14px] text-left ${on ? "bg-label" : "bg-fill-subtle"}`}
+                >
+                  <span className={`w-9 h-9 rounded-[10px] shrink-0 ${on ? "bg-white/20" : "bg-bg"}`} />
+                  <span className="flex-1 min-w-0">
+                    <span className={`block text-[14px] font-bold truncate ${on ? "text-white" : ""}`}>{p.name}</span>
+                    <span className={`block text-[11px] ${on ? "text-white/70" : "text-label-disabled"}`}>
+                      계획 {p.minutes}분{p.done ? " · 기록함" : ""}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="flex flex-col gap-2.5">
+          {plans.length > 0 && <span className="text-[11px] font-bold text-label-subtle">다른 운동</span>}
+          <div className="flex flex-wrap gap-2">
+            {KINDS.map((k) => (
+              <button
+                key={k}
+                type="button"
+                onClick={() => onSelect(k)}
+                className={`px-3.5 py-2.5 rounded-[10px] text-[14px] ${
+                  selected === k ? "bg-label text-white font-bold" : "bg-fill-subtle text-label-subtle font-medium"
+                }`}
+              >
+                {k}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
