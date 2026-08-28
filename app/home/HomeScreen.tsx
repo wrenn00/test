@@ -44,9 +44,12 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               plans={plans}
               collapsed={collapsed}
               onToggle={() => setCollapsed((v) => !v)}
-              onRecord={() => router.push("/record")}
               onEdit={(p) => setSheet({ mode: "edit", plan: p })}
-              onToggleDone={(p) => store.toggleDone(p.name)}
+              onToggleDone={(p) =>
+                p.done
+                  ? router.push(`/day?d=${TODAY}`)
+                  : router.push(`/record?d=${TODAY}&plan=${encodeURIComponent(p.name)}`)
+              }
               onAddPlan={() => setSheet({ mode: "add" })}
             />
           )}
@@ -65,6 +68,15 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               : undefined
           }
           onClose={() => setSheet(null)}
+          onRecordNow={
+            sheet.mode === "add"
+              ? (d: PlanDraft) => {
+                  store.addPlan({ name: d.name, sub: `${d.minutes}분`, done: false });
+                  setSheet(null);
+                  router.push(`/record?d=${TODAY}&plan=${encodeURIComponent(d.name)}`);
+                }
+              : undefined
+          }
           onDelete={
             sheet.mode === "edit"
               ? () => {
@@ -155,7 +167,6 @@ function TodayCard({
   plans,
   collapsed,
   onToggle,
-  onRecord,
   onEdit,
   onAddPlan,
   onToggleDone,
@@ -164,7 +175,6 @@ function TodayCard({
   plans: Plan[];
   collapsed: boolean;
   onToggle: () => void;
-  onRecord: () => void;
   onEdit: (p: Plan) => void;
   onAddPlan: () => void;
   onToggleDone: (p: Plan) => void;
@@ -246,11 +256,14 @@ function TodayCard({
         </div>
       )}
 
-      <div className="px-5 pt-1.5 pb-5">
-        <button type="button" onClick={onRecord} className="w-full py-4 rounded-[14px] bg-label text-white text-[14px] font-bold">
-          운동 기록하기
-        </button>
-      </div>
+      {plans.length === 0 && (
+        <div className="px-5 pt-1.5 pb-5">
+          <button type="button" onClick={onAddPlan} className="w-full py-4 rounded-[14px] bg-label text-white text-[14px] font-bold">
+            운동 계획 추가
+          </button>
+        </div>
+      )}
+      {plans.length > 0 && <div className="pb-3" />}
     </div>
   );
 }

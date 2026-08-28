@@ -6,7 +6,7 @@ import ScrollArea from "../components/ScrollArea";
 import DurationField from "../components/DurationField";
 import DateSheet from "../components/DateSheet";
 import { TODAY } from "../home/types";
-import { store, useStore } from "../store";
+import { store, useStore, storeSnapshot } from "../store";
 import ScrollAreaX from "../components/ScrollAreaX";
 import { CameraIcon, CloseIcon } from "../home/icons";
 
@@ -23,20 +23,33 @@ function dayLabel(day: number) {
 }
 
 
-export default function RecordScreen({ initialDay = 27, edit = false }: { initialDay?: number; edit?: boolean }) {
+export default function RecordScreen({
+  initialDay = 27,
+  edit = false,
+  initialPlan,
+}: {
+  initialDay?: number;
+  edit?: boolean;
+  initialPlan?: string;
+}) {
   const router = useRouter();
   const [photos, setPhotos] = useState([1, 2]);
-  const [kind, setKind] = useState("");
-  const [minutes, setMinutes] = useState(30);
+  const [kind, setKind] = useState(initialPlan ?? "");
+  const [minutes, setMinutes] = useState(() => {
+    if (!initialPlan) return 30;
+    const p = storeSnapshot().plans.find((x) => x.name === initialPlan);
+    return p ? parseInt(p.sub, 10) || 30 : 30;
+  });
   const [feeling, setFeeling] = useState(FEELINGS[1]);
   const [memo, setMemo] = useState("");
   const [day, setDay] = useState(initialDay);
   const [picker, setPicker] = useState(false);
   const { plans: storePlans } = useStore();
-  const plans: PlanOption[] =
+  const plansAll: PlanOption[] =
     day === TODAY
       ? storePlans.map((p) => ({ name: p.name, minutes: parseInt(p.sub, 10) || 30, done: p.done }))
       : [];
+  const plans = plansAll;
 
   return (
     <div className="relative h-full flex flex-col bg-bg overflow-hidden">

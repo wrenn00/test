@@ -26,12 +26,14 @@ export default function PlanSheet({
   initial,
   onClose,
   onSubmit,
+  onRecordNow,
   onDelete,
 }: {
   dateLabel: string;
   initial?: PlanDraft;
   onClose: () => void;
   onSubmit: (p: PlanDraft) => void;
+  onRecordNow?: (p: PlanDraft) => void;
   onDelete?: () => void;
 }) {
   const [picked, setPicked] = useState<PlanDraft | null>(initial ?? null);
@@ -53,6 +55,7 @@ export default function PlanSheet({
             onBack={() => (initial ? onClose() : setPicked(null))}
             onChange={setPicked}
             onSubmit={() => onSubmit(picked)}
+            onRecordNow={onRecordNow ? () => onRecordNow(picked) : undefined}
             onDelete={onDelete}
           />
         ) : (
@@ -165,6 +168,7 @@ function Configure({
   onBack,
   onChange,
   onSubmit,
+  onRecordNow,
   onDelete,
 }: {
   draft: PlanDraft;
@@ -173,6 +177,7 @@ function Configure({
   onBack: () => void;
   onChange: (p: PlanDraft) => void;
   onSubmit: () => void;
+  onRecordNow?: () => void;
   onDelete?: () => void;
 }) {
   return (
@@ -220,9 +225,16 @@ function Configure({
         </div>
       </div>
 
-      <button type="button" onClick={onSubmit} className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold">
-        {editing ? "저장" : "계획에 추가"}
-      </button>
+      <div className="flex flex-col gap-2">
+        <button type="button" onClick={onSubmit} className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold">
+          {editing ? "저장" : "계획에 추가"}
+        </button>
+        {!editing && onRecordNow && (
+          <button type="button" onClick={onRecordNow} className="w-full py-3.5 text-[14px] font-bold text-label-subtle">
+            이미 했어요, 지금 기록하기
+          </button>
+        )}
+      </div>
     </div>
   );
 }

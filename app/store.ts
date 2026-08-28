@@ -55,6 +55,10 @@ export const store = {
   },
 };
 
+export function storeSnapshot() {
+  return state;
+}
+
 export function useStore() {
   return useSyncExternalStore(store.subscribe, store.get, store.get);
 }
