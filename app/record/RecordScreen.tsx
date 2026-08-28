@@ -12,6 +12,10 @@ const MEMO_MAX = 200;
 
 const RECENT_DAYS = [27, 26, 25, 24, 23];
 
+function recentWith(day: number) {
+  return RECENT_DAYS.includes(day) ? RECENT_DAYS : [day, ...RECENT_DAYS].slice(0, 5);
+}
+
 function dayLabel(day: number) {
   const d = new Date(2026, 7, day);
   const w = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
@@ -24,14 +28,14 @@ function relative(day: number) {
   return "";
 }
 
-export default function RecordScreen() {
+export default function RecordScreen({ initialDay = 27 }: { initialDay?: number }) {
   const router = useRouter();
   const [photos, setPhotos] = useState([1, 2]);
   const [kind, setKind] = useState(KINDS[0]);
   const [minutes, setMinutes] = useState(32);
   const [feeling, setFeeling] = useState(FEELINGS[1]);
   const [memo, setMemo] = useState("");
-  const [day, setDay] = useState(27);
+  const [day, setDay] = useState(initialDay);
   const [picker, setPicker] = useState(false);
 
   return (
@@ -179,7 +183,7 @@ function DatePicker({
         <div className="pb-2">
           <span className="text-[15px] font-bold">언제 한 운동인가요</span>
         </div>
-        {RECENT_DAYS.map((d, i) => (
+        {recentWith(selected).map((d, i) => (
           <div key={d}>
             {i > 0 && <div className="h-px bg-line-subtle" />}
             <button

@@ -100,11 +100,11 @@ function Calendar({ photos, router }: { photos: number[]; router: ReturnType<typ
             const hasPhoto = photos.includes(day);
             const isToday = day === TODAY;
             const tone = hasPhoto || isToday ? "text-label" : day > TODAY ? "text-label-disabled" : "text-label-subtle";
-            const Cell = hasPhoto ? "button" : "div";
             return (
-              <Cell
+              <button
                 key={di}
-                {...(hasPhoto ? { type: "button" as const, onClick: () => router.push(`/day?d=${day}`) } : {})}
+                type="button"
+                onClick={() => router.push(`/day?d=${day}`)}
                 className="relative w-[43px] h-[60px]"
               >
                 {hasPhoto && <div className="absolute inset-0 rounded-[8px] bg-fill-subtle" />}
@@ -114,7 +114,7 @@ function Calendar({ photos, router }: { photos: number[]; router: ReturnType<typ
                 <span className={`absolute left-1.5 top-1.5 text-[11px] ${hasPhoto || isToday ? "font-bold" : ""} ${tone}`}>
                   {day}
                 </span>
-              </Cell>
+              </button>
             );
           })}
         </div>
