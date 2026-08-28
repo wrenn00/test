@@ -4,10 +4,16 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ScrollArea from "../components/ScrollArea";
 import DurationField from "../components/DurationField";
+import { BASE_PLANS, TODAY } from "../home/types";
 import ScrollAreaX from "../components/ScrollAreaX";
 import { CameraIcon, CloseIcon } from "../home/icons";
 
 const KINDS = ["유산소", "근력", "스트레칭", "직접 입력"];
+
+function planOptions(day: number) {
+  if (day !== TODAY) return [];
+  return BASE_PLANS.map((p) => ({ name: p.name, minutes: parseInt(p.sub, 10) || 30 }));
+}
 const FEELINGS = ["가뿐했어요", "적당했어요", "힘들었어요"];
 const MEMO_MAX = 200;
 
@@ -32,12 +38,13 @@ function relative(day: number) {
 export default function RecordScreen({ initialDay = 27, edit = false }: { initialDay?: number; edit?: boolean }) {
   const router = useRouter();
   const [photos, setPhotos] = useState([1, 2]);
-  const [kind, setKind] = useState(KINDS[0]);
-  const [minutes, setMinutes] = useState(32);
+  const [kind, setKind] = useState("");
+  const [minutes, setMinutes] = useState(30);
   const [feeling, setFeeling] = useState(FEELINGS[1]);
   const [memo, setMemo] = useState("");
   const [day, setDay] = useState(initialDay);
   const [picker, setPicker] = useState(false);
+  const plans = planOptions(day);
 
   return (
     <div className="relative h-full flex flex-col bg-bg overflow-hidden">
@@ -94,11 +101,55 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
           </ScrollAreaX>
         </Section>
 
-        <Section title="무슨 운동인가요">
-          <div className="flex flex-wrap gap-2">
-            {KINDS.map((k) => (
-              <Chip key={k} label={k} active={kind === k} onClick={() => setKind(k)} />
-            ))}
+        <Section title="무엇을 했나요">
+          {plans.length > 0 && (
+            <div className="flex flex-col gap-2.5">
+              <span className="text-[11px] font-bold text-label-subtle">오늘 계획한 운동</span>
+              <div className="flex flex-col gap-2">
+                {plans.map((p) => {
+                  const on = kind === p.name;
+                  return (
+                    <button
+                      key={p.name}
+                      type="button"
+                      onClick={() => {
+                        setKind(p.name);
+                        setMinutes(p.minutes);
+                      }}
+                      className={`flex items-center gap-4 px-4 py-3 rounded-[14px] text-left ${
+                        on ? "bg-label" : "bg-fill-subtle"
+                      }`}
+                    >
+                      <span className={`w-9 h-9 rounded-[10px] shrink-0 ${on ? "bg-white/20" : "bg-bg"}`} />
+                      <span className="flex-1 min-w-0">
+                        <span className={`block text-[14px] font-bold truncate ${on ? "text-white" : ""}`}>{p.name}</span>
+                        <span className={`block text-[11px] ${on ? "text-white/70" : "text-label-disabled"}`}>계획 {p.minutes}분</span>
+                      </span>
+                      <span
+                        className={`w-[22px] h-[22px] rounded-full shrink-0 grid place-items-center ${
+                          on ? "bg-white" : "border border-line-strong"
+                        }`}
+                      >
+                        {on && (
+                          <svg width="11" height="9" viewBox="0 0 11 9" fill="none" stroke="#191f28" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                            <path d="M1 4.5 4 7.5 10 1" />
+                          </svg>
+                        )}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-2.5">
+            {plans.length > 0 && <span className="text-[11px] font-bold text-label-subtle">계획에 없던 운동</span>}
+            <div className="flex flex-wrap gap-2">
+              {KINDS.map((k) => (
+                <Chip key={k} label={k} active={kind === k} onClick={() => setKind(k)} />
+              ))}
+            </div>
           </div>
         </Section>
 
@@ -137,8 +188,9 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
       <div className="absolute bottom-0 inset-x-0 bg-white/70 backdrop-blur-xl border-t border-white/60 px-5 pt-4 pb-9">
         <button
           type="button"
+          disabled={!kind}
           onClick={() => router.push(edit ? `/day?d=${day}` : "/home?s=done")}
-          className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold"
+          className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold disabled:opacity-35"
         >
           {edit ? "수정 완료" : "기록하기"}
         </button>
@@ -208,7 +260,7 @@ function DatePicker({
 
 function Section({ title, meta, children }: { title: string; meta?: string; children: React.ReactNode }) {
   return (
-    <section className="flex flex-col gap-2.5">
+    <section className="flex flex-col gap-3.5">
       <div className="flex items-center justify-between">
         <span className="text-[14px] font-bold">{title}</span>
         {meta && <span className="text-[11px] text-label-disabled">{meta}</span>}
