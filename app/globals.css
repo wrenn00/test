@@ -2,27 +2,24 @@
 
 :root {
   --bg: #ffffff;
-  --fill-subtle: #f4f5f7;
-  --fill-normal: #eaecef;
-  --label: #1a1d23;
-  --label-subtle: #6e7681;
-  --label-disabled: #aeb4bc;
-  --line-subtle: #eff1f3;
-  --line-normal: #e3e6e9;
-  --line-strong: #cfd4da;
-  --inverse: #ffffff;
+  --label: #191f28;
+  --label-subtle: #4e5968;
+  --label-disabled: #8b95a1;
+  --fill-subtle: #f2f4f6;
+  --line-normal: #e5e8eb;
+  --kakao: #fee500;
+  --kakao-ink: #191600;
 }
 
 @theme inline {
   --color-bg: var(--bg);
-  --color-fill-subtle: var(--fill-subtle);
-  --color-fill-normal: var(--fill-normal);
   --color-label: var(--label);
   --color-label-subtle: var(--label-subtle);
   --color-label-disabled: var(--label-disabled);
-  --color-line-subtle: var(--line-subtle);
+  --color-fill-subtle: var(--fill-subtle);
   --color-line-normal: var(--line-normal);
-  --color-line-strong: var(--line-strong);
+  --color-kakao: var(--kakao);
+  --color-kakao-ink: var(--kakao-ink);
 }
 
 html, body { background: #eceef1; color: var(--label); }
