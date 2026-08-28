@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Page() {
   return (
-    <main className="min-h-screen flex items-center justify-center py-10 px-4">
+    <main className="min-h-[100svh] flex items-center justify-center sm:py-10 sm:px-4">
       <Link
         href="/onboarding"
         className="relative w-[375px] h-[812px] bg-bg rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.12)] overflow-hidden flex flex-col items-center justify-center gap-3.5 pb-16"
