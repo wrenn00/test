@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { PlusIcon } from "../home/icons";
+import DurationField from "./DurationField";
 
 const RECENT = ["한강 러닝", "자기 전 스트레칭", "홈트 20분"];
 const CATALOG: { group: string; items: { name: string; min: number }[] }[] = [
@@ -197,28 +198,7 @@ function Configure({
 
       <div className="flex flex-col gap-2.5">
         <span className="text-[14px] font-bold">얼마나 할까요</span>
-        <div className="flex items-center justify-between px-[18px] py-3.5 rounded-2xl bg-fill-subtle">
-          <button
-            type="button"
-            onClick={() => onChange({ ...draft, minutes: Math.max(5, draft.minutes - 5) })}
-            className="w-11 h-11 rounded-full bg-bg grid place-items-center"
-            aria-label="감소"
-          >
-            <svg width="16" height="2" viewBox="0 0 16 2" aria-hidden><rect width="16" height="2" rx="1" fill="#191f28" /></svg>
-          </button>
-          <div className="flex items-baseline gap-1">
-            <span className="text-[28px] font-extrabold leading-none">{draft.minutes}</span>
-            <span className="text-[14px] font-medium text-label-subtle">분</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => onChange({ ...draft, minutes: Math.min(300, draft.minutes + 5) })}
-            className="w-11 h-11 rounded-full bg-bg grid place-items-center"
-            aria-label="증가"
-          >
-            <PlusIcon />
-          </button>
-        </div>
+        <DurationField value={draft.minutes} onChange={(v) => onChange({ ...draft, minutes: v })} />
       </div>
 
       <div className="flex flex-col gap-2.5">

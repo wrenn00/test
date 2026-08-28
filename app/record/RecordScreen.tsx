@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ScrollArea from "../components/ScrollArea";
+import DurationField from "../components/DurationField";
 import ScrollAreaX from "../components/ScrollAreaX";
-import { CameraIcon, CloseIcon, PlusIcon } from "../home/icons";
+import { CameraIcon, CloseIcon } from "../home/icons";
 
 const KINDS = ["유산소", "근력", "스트레칭", "직접 입력"];
 const FEELINGS = ["가뿐했어요", "적당했어요", "힘들었어요"];
@@ -102,14 +103,7 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
         </Section>
 
         <Section title="얼마나 했나요">
-          <div className="flex items-center justify-between px-[18px] py-3.5 rounded-2xl bg-fill-subtle">
-            <Stepper onClick={() => setMinutes((m) => Math.max(5, m - 5))} minus />
-            <div className="flex items-baseline gap-1">
-              <span className="text-[28px] font-extrabold leading-none">{minutes}</span>
-              <span className="text-[14px] font-medium text-label-subtle">분</span>
-            </div>
-            <Stepper onClick={() => setMinutes((m) => Math.min(300, m + 5))} />
-          </div>
+          <DurationField value={minutes} onChange={setMinutes} />
         </Section>
 
         <Section title="오늘 어땠나요" meta="선택">
@@ -238,10 +232,3 @@ function Chip({ label, active, onClick, grow }: { label: string; active: boolean
   );
 }
 
-function Stepper({ onClick, minus }: { onClick: () => void; minus?: boolean }) {
-  return (
-    <button type="button" onClick={onClick} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label={minus ? "감소" : "증가"}>
-      {minus ? <svg width="16" height="2" viewBox="0 0 16 2" aria-hidden><rect width="16" height="2" rx="1" fill="#191f28" /></svg> : <PlusIcon />}
-    </button>
-  );
-}

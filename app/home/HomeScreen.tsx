@@ -6,7 +6,7 @@ import { BASE_PLANS, MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from
 import ScrollArea from "../components/ScrollArea";
 import PlanSheet, { type PlanDraft } from "../components/PlanSheet";
 import TabBar from "../components/TabBar";
-import { BellIcon, ChatIcon, ChevronDown, ChevronUp, CheckIcon, HomeIcon, PersonIcon, PlusIcon } from "./icons";
+import { BellIcon, CheckIcon, ChevronDown, ChevronUp, PlusIcon } from "./icons";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
 
