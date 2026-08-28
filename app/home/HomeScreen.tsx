@@ -59,19 +59,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
 
       {editing && <PlanEditSheet plan={editing} onClose={() => setEditing(null)} />}
 
-      {popup && (
-        <MissionPopup
-          onAccept={() => {
-            setState("planned");
-            setPopup(false);
-          }}
-          onReject={() => {
-            setState("noplan");
-            setPopup(false);
-          }}
-          onClose={() => setPopup(false)}
-        />
-      )}
+      {popup && <MissionPopup onClose={() => setPopup(false)} />}
     </div>
   );
 }
@@ -254,20 +242,12 @@ function MissionCard({ onAccept, onReject }: { onAccept: () => void; onReject: (
   );
 }
 
-function MissionPopup({
-  onAccept,
-  onReject,
-  onClose,
-}: {
-  onAccept: () => void;
-  onReject: () => void;
-  onClose: () => void;
-}) {
+function MissionPopup({ onClose }: { onClose: () => void }) {
   return (
     <div className="absolute inset-0 z-20">
       <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/50" />
       <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[303px] rounded-3xl bg-bg px-6 pt-6 pb-5 flex flex-col items-center gap-6">
-        <button type="button" onClick={onClose} className="absolute right-2 top-2 w-11 h-11 grid place-items-center">
+        <button type="button" onClick={onClose} className="absolute right-2 top-2 w-11 h-11 grid place-items-center" aria-label="닫기">
           <CloseIcon />
         </button>
         <div className="relative w-[180px] h-[150px] rounded-2xl bg-fill-subtle">
@@ -283,118 +263,9 @@ function MissionPopup({
           <span className="text-[19px] font-extrabold">{MISSION.title}</span>
           <span className="text-[13px] text-label-subtle">{MISSION.short}</span>
         </div>
-        <div className="w-full flex flex-col gap-1">
-          <button type="button" onClick={onAccept} className="w-full py-4 rounded-[14px] bg-label text-white text-[15px] font-bold">
-            이걸로 할게요
-          </button>
-          <button type="button" onClick={onReject} className="w-full pt-3.5 pb-2 text-[14px] font-bold text-label-disabled">
-            오늘은 안 할래요
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PlanEditSheet({ plan, onClose }: { plan: Plan; onClose: () => void }) {
-  const [minutes, setMinutes] = useState(parseInt(plan.sub, 10) || 30);
-  const [memo, setMemo] = useState("한강 러닝");
-  const MEMO_MAX = 30;
-
-  return (
-    <div className="absolute inset-0 z-30">
-      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
-      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9 flex flex-col gap-5">
-        <div className="flex justify-center">
-          <span className="w-10 h-1 rounded-full bg-line-strong" />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-[19px] font-extrabold">{plan.name}</span>
-          <button type="button" onClick={onClose} className="px-3 py-2 rounded-full bg-fill-subtle text-[11px] font-bold text-label-subtle">
-            계획 삭제
-          </button>
-        </div>
-
-        <div className="flex flex-col gap-2.5">
-          <span className="text-[14px] font-bold">얼마나 할까요</span>
-          <div className="flex items-center justify-between px-[18px] py-3.5 rounded-2xl bg-fill-subtle">
-            <button type="button" onClick={() => setMinutes((m) => Math.max(5, m - 5))} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label="감소">
-              <svg width="16" height="2" viewBox="0 0 16 2" aria-hidden><rect width="16" height="2" rx="1" fill="#191f28" /></svg>
-            </button>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[28px] font-extrabold leading-none">{minutes}</span>
-              <span className="text-[14px] font-medium text-label-subtle">분</span>
-            </div>
-            <button type="button" onClick={() => setMinutes((m) => Math.min(300, m + 5))} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label="증가">
-              <PlusIcon />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[14px] font-bold">한 줄 메모</span>
-            <span className="text-[11px] text-label-disabled">선택</span>
-          </div>
-          <div className="flex items-center gap-3 px-4 h-[52px] rounded-[14px] bg-fill-subtle">
-            <input
-              value={memo}
-              maxLength={MEMO_MAX}
-              onChange={(e) => setMemo(e.target.value)}
-              placeholder="예) 한강 러닝"
-              className="flex-1 bg-transparent text-[14px] font-bold outline-none placeholder:font-medium placeholder:text-label-disabled"
-            />
-            <span className={`text-[11px] shrink-0 ${memo.length > MEMO_MAX * 0.66 ? "text-label-subtle font-bold" : "text-label-disabled"}`}>
-              {memo.length} / {MEMO_MAX}
-            </span>
-          </div>
-        </div>
-
-        <button type="button" onClick={onClose} className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold">
-          저장
+        <button type="button" onClick={onClose} className="w-full py-4 rounded-[14px] bg-label text-white text-[15px] font-bold">
+          확인했어요
         </button>
-      </div>
-    </div>
-  );
-}
-
-function MonthSheet({ onClose }: { onClose: () => void }) {
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  return (
-    <div className="absolute inset-0 z-30">
-      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
-      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9">
-        <div className="flex justify-center pb-3">
-          <span className="w-10 h-1 rounded-full bg-line-strong" />
-        </div>
-        <div className="flex items-center justify-between pb-4">
-          <button type="button" className="w-11 h-11 grid place-items-center" aria-label="이전 해">
-            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#191f28" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M7 1 1 7l6 6" />
-            </svg>
-          </button>
-          <span className="text-[16px] font-bold">2026년</span>
-          <button type="button" disabled className="w-11 h-11 grid place-items-center opacity-30" aria-label="다음 해">
-            <svg width="8" height="14" viewBox="0 0 8 14" fill="none" stroke="#191f28" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-              <path d="M1 1l6 6-6 6" />
-            </svg>
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-2.5">
-          {months.map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={onClose}
-              className={`h-14 rounded-[14px] text-[14px] font-bold ${
-                m === 8 ? "bg-label text-white" : "bg-fill-subtle"
-              }`}
-            >
-              {m}월
-            </button>
-          ))}
-        </div>
       </div>
     </div>
   );
