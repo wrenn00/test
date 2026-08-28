@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #ffffff;
+  --fill-subtle: #f4f5f7;
+  --fill-normal: #eaecef;
+  --label: #1a1d23;
+  --label-subtle: #6e7681;
+  --label-disabled: #aeb4bc;
+  --line-subtle: #eff1f3;
+  --line-normal: #e3e6e9;
+  --line-strong: #cfd4da;
+  --inverse: #ffffff;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-fill-subtle: var(--fill-subtle);
+  --color-fill-normal: var(--fill-normal);
+  --color-label: var(--label);
+  --color-label-subtle: var(--label-subtle);
+  --color-label-disabled: var(--label-disabled);
+  --color-line-subtle: var(--line-subtle);
+  --color-line-normal: var(--line-normal);
+  --color-line-strong: var(--line-strong);
+}
+
+html, body { background: #eceef1; color: var(--label); }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
