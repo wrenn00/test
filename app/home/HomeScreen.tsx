@@ -2,10 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { BASE_PLANS, MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from "./types";
+import { MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from "./types";
 import ScrollArea from "../components/ScrollArea";
 import PlanSheet, { type PlanDraft } from "../components/PlanSheet";
 import TabBar from "../components/TabBar";
+import { store, useStore } from "../store";
 import { BellIcon, CheckIcon, ChevronDown, ChevronUp, PlusIcon } from "./icons";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -16,17 +17,12 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
   const [popup, setPopup] = useState(initial === "mission");
   const [collapsed, setCollapsed] = useState(false);
   const [monthOpen, setMonthOpen] = useState(false);
-  const [planList, setPlanList] = useState<Plan[] | null>(null);
+  const { plans: storePlans, recorded } = useStore();
   const [sheet, setSheet] = useState<{ mode: "add" } | { mode: "edit"; plan: Plan } | null>(null);
 
-  const photos = state === "done" ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
-  const defaults: Plan[] =
-    state === "planned"
-      ? BASE_PLANS
-      : state === "done"
-      ? BASE_PLANS.map((p, i) => (i === 0 ? { ...p, done: true } : p))
-      : [];
-  const plans = planList ?? defaults;
+  const isDone = state === "done" || recorded;
+  const photos = isDone ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
+  const plans: Plan[] = state === "planned" || state === "done" || recorded ? storePlans : [];
 
   return (
     <div className="relative h-full flex flex-col bg-bg">
@@ -51,12 +47,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               onToggle={() => setCollapsed((v) => !v)}
               onRecord={() => router.push("/record")}
               onEdit={(p) => setSheet({ mode: "edit", plan: p })}
-              onToggleDone={(p) => {
-                const next = plans.map((x) => (x.name === p.name ? { ...x, done: !x.done } : x));
-                setPlanList(next);
-                if (next.some((x) => x.done)) setState("done");
-                else if (state === "done") setState("planned");
-              }}
+              onToggleDone={(p) => store.toggleDone(p.name)}
               onAddPlan={() => setSheet({ mode: "add" })}
             />
           )}
@@ -79,7 +70,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
           onDelete={
             sheet.mode === "edit"
               ? () => {
-                  setPlanList(plans.filter((p) => p.name !== sheet.plan.name));
+                  store.removePlan(sheet.plan.name);
                   setSheet(null);
                 }
               : undefined
@@ -87,9 +78,9 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
           onSubmit={(d: PlanDraft) => {
             const sub = d.memo ? `${d.memo} ${d.minutes}분` : `${d.minutes}분`;
             if (sheet.mode === "edit") {
-              setPlanList(plans.map((p) => (p.name === sheet.plan.name ? { ...p, name: d.name, sub } : p)));
+              store.updatePlan(sheet.plan.name, { name: d.name, sub });
             } else {
-              setPlanList([...plans, { name: d.name, sub, done: false }]);
+              store.addPlan({ name: d.name, sub, done: false });
               if (state === "noplan") setState("planned");
             }
             setSheet(null);

@@ -4,16 +4,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import ScrollArea from "../components/ScrollArea";
 import DurationField from "../components/DurationField";
-import { BASE_PLANS, TODAY } from "../home/types";
+import { TODAY } from "../home/types";
+import { store, useStore } from "../store";
 import ScrollAreaX from "../components/ScrollAreaX";
 import { CameraIcon, CloseIcon } from "../home/icons";
 
 const KINDS = ["유산소", "근력", "스트레칭", "직접 입력"];
 
-function planOptions(day: number) {
-  if (day !== TODAY) return [];
-  return BASE_PLANS.map((p) => ({ name: p.name, minutes: parseInt(p.sub, 10) || 30 }));
-}
+type PlanOption = { name: string; minutes: number; done: boolean };
 const FEELINGS = ["가뿐했어요", "적당했어요", "힘들었어요"];
 const MEMO_MAX = 200;
 
@@ -44,7 +42,11 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
   const [memo, setMemo] = useState("");
   const [day, setDay] = useState(initialDay);
   const [picker, setPicker] = useState(false);
-  const plans = planOptions(day);
+  const { plans: storePlans } = useStore();
+  const plans: PlanOption[] =
+    day === TODAY
+      ? storePlans.map((p) => ({ name: p.name, minutes: parseInt(p.sub, 10) || 30, done: p.done }))
+      : [];
 
   return (
     <div className="relative h-full flex flex-col bg-bg overflow-hidden">
@@ -122,7 +124,9 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
                       <span className={`w-9 h-9 rounded-[10px] shrink-0 ${on ? "bg-white/20" : "bg-bg"}`} />
                       <span className="flex-1 min-w-0">
                         <span className={`block text-[14px] font-bold truncate ${on ? "text-white" : ""}`}>{p.name}</span>
-                        <span className={`block text-[11px] ${on ? "text-white/70" : "text-label-disabled"}`}>계획 {p.minutes}분</span>
+                        <span className={`block text-[11px] ${on ? "text-white/70" : "text-label-disabled"}`}>
+                          계획 {p.minutes}분{p.done ? " · 기록함" : ""}
+                        </span>
                       </span>
                       <span
                         className={`w-[22px] h-[22px] rounded-full shrink-0 grid place-items-center ${
@@ -188,7 +192,10 @@ export default function RecordScreen({ initialDay = 27, edit = false }: { initia
         <button
           type="button"
           disabled={!kind}
-          onClick={() => router.push(edit ? `/day?d=${day}` : "/home?s=done")}
+          onClick={() => {
+            if (!edit && day === TODAY) store.record(kind, minutes);
+            router.push(edit ? `/day?d=${day}` : "/home?s=done");
+          }}
           className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold disabled:opacity-35"
         >
           {edit ? "수정 완료" : "기록하기"}
