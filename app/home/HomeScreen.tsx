@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BASE_PLANS, MISSION, PHOTO_DAYS, TODAY, type DayState, type Plan } from "./types";
 import ScrollArea from "../components/ScrollArea";
+import PlanSheet, { type PlanDraft } from "../components/PlanSheet";
+import TabBar from "../components/TabBar";
 import { BellIcon, ChatIcon, ChevronDown, ChevronUp, CheckIcon, HomeIcon, PersonIcon, PlusIcon } from "./icons";
 
 const WEEKDAYS = ["월", "화", "수", "목", "금", "토", "일"];
@@ -14,15 +16,17 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
   const [popup, setPopup] = useState(initial === "mission");
   const [collapsed, setCollapsed] = useState(false);
   const [monthOpen, setMonthOpen] = useState(false);
-  const [editing, setEditing] = useState<Plan | null>(null);
+  const [planList, setPlanList] = useState<Plan[] | null>(null);
+  const [sheet, setSheet] = useState<{ mode: "add" } | { mode: "edit"; plan: Plan } | null>(null);
 
   const photos = state === "done" ? [...PHOTO_DAYS, TODAY] : PHOTO_DAYS;
-  const plans: Plan[] =
+  const defaults: Plan[] =
     state === "planned"
       ? BASE_PLANS
       : state === "done"
       ? BASE_PLANS.map((p, i) => (i === 0 ? { ...p, done: true } : p))
       : [];
+  const plans = planList ?? defaults;
 
   return (
     <div className="relative h-full flex flex-col bg-bg">
@@ -46,18 +50,46 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               collapsed={collapsed}
               onToggle={() => setCollapsed((v) => !v)}
               onRecord={() => router.push("/record")}
-              onEdit={(p) => setEditing(p)}
-              onAddPlan={() => router.push("/plan")}
+              onEdit={(p) => setSheet({ mode: "edit", plan: p })}
+              onAddPlan={() => setSheet({ mode: "add" })}
             />
           )}
         </div>
       </ScrollArea>
 
-      <BottomNav />
+      <TabBar active="home" />
 
       {monthOpen && <MonthSheet onClose={() => setMonthOpen(false)} />}
 
-      {editing && <PlanEditSheet plan={editing} onClose={() => setEditing(null)} />}
+      {sheet && (
+        <PlanSheet
+          dateLabel="8월 27일"
+          initial={
+            sheet.mode === "edit"
+              ? { name: sheet.plan.name, minutes: parseInt(sheet.plan.sub, 10) || 30, memo: "" }
+              : undefined
+          }
+          onClose={() => setSheet(null)}
+          onDelete={
+            sheet.mode === "edit"
+              ? () => {
+                  setPlanList(plans.filter((p) => p.name !== sheet.plan.name));
+                  setSheet(null);
+                }
+              : undefined
+          }
+          onSubmit={(d: PlanDraft) => {
+            const sub = d.memo ? `${d.memo} ${d.minutes}분` : `${d.minutes}분`;
+            if (sheet.mode === "edit") {
+              setPlanList(plans.map((p) => (p.name === sheet.plan.name ? { ...p, name: d.name, sub } : p)));
+            } else {
+              setPlanList([...plans, { name: d.name, sub, done: false }]);
+              if (state === "noplan") setState("planned");
+            }
+            setSheet(null);
+          }}
+        />
+      )}
 
       {popup && <MissionPopup onClose={() => setPopup(false)} />}
     </div>
@@ -268,69 +300,6 @@ function MissionPopup({ onClose }: { onClose: () => void }) {
   );
 }
 
-function PlanEditSheet({ plan, onClose }: { plan: Plan; onClose: () => void }) {
-  const [minutes, setMinutes] = useState(parseInt(plan.sub, 10) || 30);
-  const [memo, setMemo] = useState("한강 러닝");
-  const MEMO_MAX = 30;
-
-  return (
-    <div className="absolute inset-0 z-30">
-      <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-label/45" />
-      <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9 flex flex-col gap-5">
-        <div className="flex justify-center">
-          <span className="w-10 h-1 rounded-full bg-line-strong" />
-        </div>
-
-        <div className="flex items-center justify-between">
-          <span className="text-[19px] font-extrabold">{plan.name}</span>
-          <button type="button" onClick={onClose} className="px-3 py-2 rounded-full bg-fill-subtle text-[11px] font-bold text-label-subtle">
-            계획 삭제
-          </button>
-        </div>
-
-        <div className="flex flex-col gap-2.5">
-          <span className="text-[14px] font-bold">얼마나 할까요</span>
-          <div className="flex items-center justify-between px-[18px] py-3.5 rounded-2xl bg-fill-subtle">
-            <button type="button" onClick={() => setMinutes((m) => Math.max(5, m - 5))} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label="감소">
-              <svg width="16" height="2" viewBox="0 0 16 2" aria-hidden><rect width="16" height="2" rx="1" fill="#191f28" /></svg>
-            </button>
-            <div className="flex items-baseline gap-1">
-              <span className="text-[28px] font-extrabold leading-none">{minutes}</span>
-              <span className="text-[14px] font-medium text-label-subtle">분</span>
-            </div>
-            <button type="button" onClick={() => setMinutes((m) => Math.min(300, m + 5))} className="w-11 h-11 rounded-full bg-bg grid place-items-center" aria-label="증가">
-              <PlusIcon />
-            </button>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2.5">
-          <div className="flex items-center justify-between">
-            <span className="text-[14px] font-bold">한 줄 메모</span>
-            <span className="text-[11px] text-label-disabled">선택</span>
-          </div>
-          <div className="flex items-center gap-3 px-4 h-[52px] rounded-[14px] bg-fill-subtle">
-            <input
-              value={memo}
-              maxLength={MEMO_MAX}
-              onChange={(e) => setMemo(e.target.value)}
-              placeholder="예) 한강 러닝"
-              className="flex-1 bg-transparent text-[14px] font-bold outline-none placeholder:font-medium placeholder:text-label-disabled"
-            />
-            <span className={`text-[11px] shrink-0 ${memo.length > MEMO_MAX * 0.66 ? "text-label-subtle font-bold" : "text-label-disabled"}`}>
-              {memo.length} / {MEMO_MAX}
-            </span>
-          </div>
-        </div>
-
-        <button type="button" onClick={onClose} className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold">
-          저장
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function MonthSheet({ onClose }: { onClose: () => void }) {
   const months = Array.from({ length: 12 }, (_, i) => i + 1);
   return (
@@ -370,20 +339,3 @@ function MonthSheet({ onClose }: { onClose: () => void }) {
   );
 }
 
-function BottomNav() {
-  const tabs = [
-    { label: "홈", icon: <HomeIcon active />, active: true },
-    { label: "채팅", icon: <ChatIcon />, active: false },
-    { label: "마이", icon: <PersonIcon />, active: false },
-  ];
-  return (
-    <nav className="absolute bottom-0 inset-x-0 h-[98px] flex bg-white/70 backdrop-blur-xl border-t border-white/60">
-      {tabs.map((tab) => (
-        <div key={tab.label} className="flex-1 flex flex-col items-center pt-3 gap-1.5">
-          {tab.icon}
-          <span className={`text-[11px] font-bold ${tab.active ? "text-label" : "text-label-disabled"}`}>{tab.label}</span>
-        </div>
-      ))}
-    </nav>
-  );
-}

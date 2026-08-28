@@ -41,15 +41,15 @@ export const HomeIcon = ({ active }: { active?: boolean }) => (
   </svg>
 );
 
-export const ChatIcon = () => (
-  <svg width="24" height="26" viewBox="0 0 24 26" fill="none" stroke="#8b95a1" strokeWidth="2" strokeLinejoin="round" aria-hidden>
+export const ChatIcon = ({ active }: { active?: boolean }) => (
+  <svg width="24" height="26" viewBox="0 0 24 26" fill={active ? "#191f28" : "none"} stroke={active ? "#191f28" : "#8b95a1"} strokeWidth="2" strokeLinejoin="round" aria-hidden>
     <rect x="1" y="1" width="22" height="17" rx="6" />
     <path d="M6 18v6l7-6" />
   </svg>
 );
 
-export const PersonIcon = () => (
-  <svg width="22" height="24" viewBox="0 0 22 24" fill="none" stroke="#8b95a1" strokeWidth="2" strokeLinejoin="round" aria-hidden>
+export const PersonIcon = ({ active }: { active?: boolean }) => (
+  <svg width="22" height="24" viewBox="0 0 22 24" fill="none" stroke={active ? "#191f28" : "#8b95a1"} strokeWidth="2" strokeLinejoin="round" aria-hidden>
     <circle cx="11" cy="6" r="5" />
     <path d="M1 23c0-6 4.5-9 10-9s10 3 10 9" />
   </svg>

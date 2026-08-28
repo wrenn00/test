@@ -49,7 +49,11 @@ export default function NotificationScreen({ empty }: { empty: boolean }) {
               여기로 보내드려요
             </span>
           </div>
-          <button type="button" className="px-4 py-3 rounded-[14px] border border-line-strong text-[14px] font-bold">
+          <button
+            type="button"
+            onClick={() => router.push("/settings/notifications")}
+            className="px-4 py-3 rounded-[14px] border border-line-strong text-[14px] font-bold"
+          >
             알림 설정 열기
           </button>
         </div>
