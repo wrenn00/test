@@ -65,7 +65,11 @@ export default function DayScreen({ day }: { day: number }) {
                 <span className="text-[14px] leading-relaxed">한강 따라 걸었다. 바람이 선선해서 생각보다 오래 걸음.</span>
               </div>
 
-              <button type="button" className="w-full py-4 rounded-[14px] border border-line-strong text-[14px] font-bold">
+              <button
+                type="button"
+                onClick={() => router.push(`/record?d=${day}&edit=1`)}
+                className="w-full py-4 rounded-[14px] border border-line-strong text-[14px] font-bold"
+              >
                 사진 추가
               </button>
             </div>
@@ -165,8 +169,15 @@ export default function DayScreen({ day }: { day: number }) {
         <ActionSheet
           onClose={() => setSheet(false)}
           items={[
-            { title: "사진 저장", desc: "이 날 사진을 기기에 저장" },
-            { title: "기록 수정", desc: "운동, 시간, 느낌, 메모 고치기" },
+            { title: "사진 저장", desc: "이 날 사진을 기기에 저장", onClick: () => setSheet(false) },
+            {
+              title: "기록 수정",
+              desc: "운동, 시간, 느낌, 메모 고치기",
+              onClick: () => {
+                setSheet(false);
+                router.push(`/record?d=${day}&edit=1`);
+              },
+            },
             {
               title: "기록 삭제",
               desc: "사진과 내역 전부 지움",

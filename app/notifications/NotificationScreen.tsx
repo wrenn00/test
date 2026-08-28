@@ -2,22 +2,24 @@
 
 import { useRouter } from "next/navigation";
 import ScrollArea from "../components/ScrollArea";
+import { useState } from "react";
 import { BackIcon } from "../home/icons";
 
-type Noti = { title: string; body: string; time: string; unread: boolean };
+type Noti = { title: string; body: string; time: string; unread: boolean; href: string };
 
 const TODAY: Noti[] = [
-  { title: "오늘의 미션이 도착했어요", body: "가볍게 15분 걷기", time: "오전 7:00", unread: true },
-  { title: "오늘 유산소 계획이 있어요", body: "한강 러닝 40분을 계획해두셨어요", time: "오전 8:00", unread: true },
-  { title: "어제 기록이 비어 있어요", body: "지금 남겨도 어제 날짜로 저장돼요", time: "오전 9:12", unread: true },
+  { title: "오늘의 미션이 도착했어요", body: "가볍게 15분 걷기", time: "오전 7:00", unread: true, href: "/home?s=mission" },
+  { title: "오늘 유산소 계획이 있어요", body: "한강 러닝 40분을 계획해두셨어요", time: "오전 8:00", unread: true, href: "/home?s=planned" },
+  { title: "어제 기록이 비어 있어요", body: "지금 남겨도 어제 날짜로 저장돼요", time: "오전 9:12", unread: true, href: "/record?d=26" },
 ];
 const EARLIER: Noti[] = [
-  { title: "이번 주 3번 운동했어요", body: "지난주보다 한 번 늘었어요", time: "8월 24일", unread: false },
-  { title: "7월 기록이 정리됐어요", body: "한 달 동안 사진 17장을 남기셨어요", time: "8월 1일", unread: false },
+  { title: "이번 주 3번 운동했어요", body: "지난주보다 한 번 늘었어요", time: "8월 24일", unread: false, href: "/home?s=done" },
+  { title: "7월 기록이 정리됐어요", body: "한 달 동안 사진 17장을 남기셨어요", time: "8월 1일", unread: false, href: "/home?s=done" },
 ];
 
 export default function NotificationScreen({ empty }: { empty: boolean }) {
   const router = useRouter();
+  const [read, setRead] = useState(false);
 
   return (
     <div className="h-full flex flex-col bg-bg">
@@ -29,7 +31,12 @@ export default function NotificationScreen({ empty }: { empty: boolean }) {
         {empty ? (
           <span className="w-11 h-11" aria-hidden />
         ) : (
-          <button type="button" className="px-2.5 py-2 -mr-2.5 text-[12px] font-bold text-label-subtle">
+          <button
+            type="button"
+            onClick={() => setRead(true)}
+            disabled={read}
+            className="px-2.5 py-2 -mr-2.5 text-[12px] font-bold text-label-subtle disabled:text-label-disabled"
+          >
             모두 읽음
           </button>
         )}
@@ -59,23 +66,25 @@ export default function NotificationScreen({ empty }: { empty: boolean }) {
         </div>
       ) : (
         <ScrollArea className="flex-1 px-5 pb-8 flex flex-col gap-6">
-          <Group title="오늘" items={TODAY} />
-          <Group title="이전" items={EARLIER} />
+          <Group title="오늘" items={read ? TODAY.map((n) => ({ ...n, unread: false })) : TODAY} onOpen={(h) => router.push(h)} />
+          <Group title="이전" items={EARLIER} onOpen={(h) => router.push(h)} />
         </ScrollArea>
       )}
     </div>
   );
 }
 
-function Group({ title, items }: { title: string; items: Noti[] }) {
+function Group({ title, items, onOpen }: { title: string; items: Noti[]; onOpen: (href: string) => void }) {
   return (
     <section className="flex flex-col gap-2.5">
       <span className="text-[11px] font-bold text-label-subtle">{title}</span>
       <div className="flex flex-col gap-2">
         {items.map((n) => (
-          <div
+          <button
             key={n.title}
-            className={`relative flex gap-3.5 px-4 py-4 rounded-2xl ${
+            type="button"
+            onClick={() => onOpen(n.href)}
+            className={`relative w-full text-left flex gap-3.5 px-4 py-4 rounded-2xl ${
               n.unread ? "bg-fill-subtle" : "border border-line-normal"
             }`}
           >
@@ -88,7 +97,7 @@ function Group({ title, items }: { title: string; items: Noti[] }) {
               <span className="text-[11px] text-label-subtle">{n.body}</span>
             </div>
             {n.unread && <span className="absolute right-3.5 top-3.5 w-[7px] h-[7px] rounded-full bg-label" />}
-          </div>
+          </button>
         ))}
       </div>
     </section>

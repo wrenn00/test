@@ -82,8 +82,8 @@ export default function PhotoScreen({ day, initial }: { day: number; initial: nu
           dark
           onClose={() => setSheet(false)}
           items={[
-            { title: "사진 저장", desc: "이 사진 1장을 기기에 저장" },
-            { title: "대표 사진으로", desc: "달력에 이 사진이 보인다" },
+            { title: "사진 저장", desc: "이 사진 1장을 기기에 저장", onClick: () => setSheet(false) },
+            { title: "대표 사진으로", desc: "달력에 이 사진이 보인다", onClick: () => setSheet(false) },
             {
               title: "사진 삭제",
               desc: "이 사진 1장만 지움. 기록은 남는다",

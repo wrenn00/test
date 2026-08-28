@@ -28,7 +28,7 @@ function relative(day: number) {
   return "";
 }
 
-export default function RecordScreen({ initialDay = 27 }: { initialDay?: number }) {
+export default function RecordScreen({ initialDay = 27, edit = false }: { initialDay?: number; edit?: boolean }) {
   const router = useRouter();
   const [photos, setPhotos] = useState([1, 2]);
   const [kind, setKind] = useState(KINDS[0]);
@@ -44,7 +44,7 @@ export default function RecordScreen({ initialDay = 27 }: { initialDay?: number 
         <button type="button" onClick={() => router.back()} className="w-11 h-11 -ml-3 grid place-items-center">
           <CloseIcon />
         </button>
-        <span className="text-[15px] font-bold">운동 기록</span>
+        <span className="text-[15px] font-bold">{edit ? "기록 수정" : "운동 기록"}</span>
         <span className="w-11 h-11" aria-hidden />
       </div>
 
@@ -143,10 +143,10 @@ export default function RecordScreen({ initialDay = 27 }: { initialDay?: number 
       <div className="absolute bottom-0 inset-x-0 bg-white/70 backdrop-blur-xl border-t border-white/60 px-5 pt-4 pb-9">
         <button
           type="button"
-          onClick={() => router.push("/home?s=done")}
+          onClick={() => router.push(edit ? `/day?d=${day}` : "/home?s=done")}
           className="w-full py-4 rounded-2xl bg-label text-white text-[15px] font-bold"
         >
-          기록하기
+          {edit ? "수정 완료" : "기록하기"}
         </button>
       </div>
 

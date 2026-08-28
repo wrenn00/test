@@ -51,6 +51,12 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
               onToggle={() => setCollapsed((v) => !v)}
               onRecord={() => router.push("/record")}
               onEdit={(p) => setSheet({ mode: "edit", plan: p })}
+              onToggleDone={(p) => {
+                const next = plans.map((x) => (x.name === p.name ? { ...x, done: !x.done } : x));
+                setPlanList(next);
+                if (next.some((x) => x.done)) setState("done");
+                else if (state === "done") setState("planned");
+              }}
               onAddPlan={() => setSheet({ mode: "add" })}
             />
           )}
@@ -163,6 +169,7 @@ function TodayCard({
   onRecord,
   onEdit,
   onAddPlan,
+  onToggleDone,
 }: {
   state: DayState;
   plans: Plan[];
@@ -171,6 +178,7 @@ function TodayCard({
   onRecord: () => void;
   onEdit: (p: Plan) => void;
   onAddPlan: () => void;
+  onToggleDone: (p: Plan) => void;
 }) {
   const doneCount = plans.filter((p) => p.done).length;
   const showList = plans.length > 0 && !collapsed;
@@ -216,7 +224,21 @@ function TodayCard({
                     </span>
                   )}
                   <span
-                    className={`w-6 h-6 rounded-full shrink-0 grid place-items-center ${
+                    role="button"
+                    tabIndex={0}
+                    aria-label={p.done ? "완료 취소" : "완료 표시"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleDone(p);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onToggleDone(p);
+                      }
+                    }}
+                    className={`w-7 h-7 -mr-0.5 rounded-full shrink-0 grid place-items-center cursor-pointer ${
                       p.done ? "bg-label" : "border border-line-strong"
                     }`}
                   >

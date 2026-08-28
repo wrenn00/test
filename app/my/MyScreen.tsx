@@ -59,7 +59,11 @@ export default function MyScreen() {
               <span className="text-[11px] text-label-disabled">버전</span>
               <span className="text-[11px] text-label-disabled">1.0.0</span>
             </div>
-            <button type="button" className="self-start text-[14px] font-bold text-label-subtle">
+            <button
+              type="button"
+              onClick={() => router.push("/login")}
+              className="self-start text-[14px] font-bold text-label-subtle"
+            >
               로그아웃
             </button>
           </div>

@@ -16,6 +16,8 @@ const ROWS: Row[] = [
 
 export default function NotificationSettingsScreen() {
   const router = useRouter();
+  const [picking, setPicking] = useState<Row | null>(null);
+  const [times, setTimes] = useState<Record<string, string>>({ mission: "오전 7:00", plan: "오전 8:00", record: "오후 9:00" });
   const [on, setOn] = useState<Record<string, boolean>>({
     mission: true,
     plan: true,
@@ -24,7 +26,7 @@ export default function NotificationSettingsScreen() {
   });
 
   return (
-    <div className="h-full flex flex-col bg-bg">
+    <div className="relative h-full flex flex-col bg-bg">
       <div className="px-5 pt-14 h-[100px] flex items-center justify-between">
         <button type="button" onClick={() => router.back()} className="w-11 h-11 -ml-3 grid place-items-center">
           <BackIcon />
@@ -59,10 +61,10 @@ export default function NotificationSettingsScreen() {
               {r.time && on[r.key] && (
                 <>
                   <div className="h-px bg-line-subtle" />
-                  <button type="button" className="w-full flex items-center justify-between py-3.5">
+                  <button type="button" onClick={() => setPicking(r)} className="w-full flex items-center justify-between py-3.5">
                     <span className="text-[13px] text-label-subtle">알림 시각</span>
                     <span className="flex items-center gap-1.5 text-[13px] font-bold">
-                      {r.time}
+                      {times[r.key]}
                       <span className="text-label-disabled">›</span>
                     </span>
                   </button>
@@ -76,6 +78,38 @@ export default function NotificationSettingsScreen() {
           기기 설정에서 알림이 꺼져 있으면 여기 설정과 상관없이 알림이 오지 않아요.
         </p>
       </ScrollArea>
+
+      {picking && (
+        <div className="absolute inset-0 z-30">
+          <button type="button" aria-label="닫기" onClick={() => setPicking(null)} className="absolute inset-0 bg-label/45" />
+          <div className="absolute inset-x-0 bottom-0 rounded-t-3xl bg-bg px-5 pt-2.5 pb-9">
+            <div className="flex justify-center pb-3">
+              <span className="w-10 h-1 rounded-full bg-line-strong" />
+            </div>
+            <div className="pb-2 text-[15px] font-bold">{picking.title} 알림 시각</div>
+            {["오전 6:00", "오전 7:00", "오전 8:00", "오후 7:00", "오후 9:00"].map((t, i) => (
+              <div key={t}>
+                {i > 0 && <div className="h-px bg-line-subtle" />}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTimes((v) => ({ ...v, [picking.key]: t }));
+                    setPicking(null);
+                  }}
+                  className="w-full flex items-center justify-between py-3.5"
+                >
+                  <span className="text-[14px] font-bold">{t}</span>
+                  {times[picking.key] === t && (
+                    <svg width="14" height="11" viewBox="0 0 14 11" fill="none" stroke="#191f28" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M1 5.5 5 9.5 13 1.5" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
