@@ -40,17 +40,7 @@ export default function PlanAddScreen({ day }: { day: number }) {
         <span className="w-11 h-11" aria-hidden />
       </div>
 
-      <div className="px-5 pb-4">
-        <div className="flex items-center gap-2.5 h-12 px-4 rounded-[14px] bg-fill-subtle">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#8b95a1" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
-            <circle cx="7" cy="7" r="6" />
-            <path d="M12 12l5 5" />
-          </svg>
-          <span className="text-[14px] text-label-disabled">운동 이름을 검색해보세요</span>
-        </div>
-      </div>
-
-      <ScrollArea className="flex-1 px-5 pb-[130px] flex flex-col gap-6">
+      <ScrollArea className="flex-1 px-5 pt-2 pb-[130px] flex flex-col gap-6">
         <section className="flex flex-col gap-3">
           <span className="text-[11px] font-bold text-label-subtle">자주 계획하는 운동</span>
           <div className="flex flex-wrap gap-2">
