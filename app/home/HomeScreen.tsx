@@ -31,7 +31,7 @@ export default function HomeScreen({ initial }: { initial: DayState }) {
 
         <div className="px-5 pt-6 pb-8 flex flex-col gap-6">
           <Summary count={photos.length} />
-          <Calendar photos={photos} />
+          <Calendar photos={photos} router={router} />
           {state === "mission" ? (
             <MissionCard onAccept={() => setState("planned")} onReject={() => setState("noplan")} />
           ) : (
@@ -80,7 +80,7 @@ function Summary({ count }: { count: number }) {
   );
 }
 
-function Calendar({ photos }: { photos: number[] }) {
+function Calendar({ photos, router }: { photos: number[]; router: ReturnType<typeof useRouter> }) {
   const cells: (number | null)[] = [...Array<null>(5).fill(null), ...Array.from({ length: 31 }, (_, i) => i + 1)];
   while (cells.length % 7 !== 0) cells.push(null);
   const weeks = Array.from({ length: cells.length / 7 }, (_, i) => cells.slice(i * 7, i * 7 + 7));
@@ -101,8 +101,13 @@ function Calendar({ photos }: { photos: number[] }) {
             const hasPhoto = photos.includes(day);
             const isToday = day === TODAY;
             const tone = hasPhoto || isToday ? "text-label" : day > TODAY ? "text-label-disabled" : "text-label-subtle";
+            const Cell = hasPhoto ? "button" : "div";
             return (
-              <div key={di} className="relative w-[43px] h-[60px]">
+              <Cell
+                key={di}
+                {...(hasPhoto ? { type: "button" as const, onClick: () => router.push(`/day?d=${day}`) } : {})}
+                className="relative w-[43px] h-[60px]"
+              >
                 {hasPhoto && <div className="absolute inset-0 rounded-[8px] bg-fill-subtle" />}
                 {isToday && (
                   <div className={`absolute inset-0 rounded-[8px] border-2 border-label ${hasPhoto ? "" : "border-dashed"}`} />
@@ -110,7 +115,7 @@ function Calendar({ photos }: { photos: number[] }) {
                 <span className={`absolute left-1.5 top-1.5 text-[11px] ${hasPhoto || isToday ? "font-bold" : ""} ${tone}`}>
                   {day}
                 </span>
-              </div>
+              </Cell>
             );
           })}
         </div>

@@ -22,3 +22,15 @@ export const BASE_PLANS: Plan[] = [
 
 export const TODAY = 27;
 export const PHOTO_DAYS = [4, 5, 6, 8, 10, 11, 12, 13, 14, 17, 18];
+
+export const PHOTO_COUNT: Record<number, number> = { 6: 3, 11: 2 };
+
+export function photosOf(day: number) {
+  return PHOTO_COUNT[day] ?? 1;
+}
+
+export function labelOf(day: number) {
+  const d = new Date(2026, 7, day);
+  const w = ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
+  return `8월 ${day}일 ${w}요일`;
+}
